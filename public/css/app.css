@@ -63,6 +63,10 @@ body {
     min-height: 280px;
 }
 
+.auth-panel {
+    max-width: 420px;
+}
+
 @media (max-width: 575.98px) {
     .panel {
         padding: 1rem;

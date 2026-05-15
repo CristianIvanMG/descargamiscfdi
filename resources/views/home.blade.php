@@ -10,7 +10,7 @@
                     <p class="text-secondary mb-0">{{ __('app.home.subtitle') }}</p>
                 </div>
                 <div class="d-flex align-items-start">
-                    <span class="badge text-bg-success rounded-pill px-3 py-2">{{ __('app.home.status_ready') }}</span>
+                    <a class="btn btn-primary" href="{{ route('dashboard') }}">{{ __('app.nav.dashboard') }}</a>
                 </div>
             </div>
 

@@ -106,3 +106,17 @@ La ruta exacta cambia segun el usuario de Hostinger.
 - `public/.htaccess` solo permite ejecutar `index.php` y bloquea PHP suelto dentro de `public`.
 - Laravel agrega headers de seguridad: CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` y `Permissions-Policy`.
 - Cookies de sesion preparadas para `secure`, `http_only`, cifrado y `same_site=lax`.
+
+## Fase 2 - Arquitectura general
+
+La arquitectura base ya incluye:
+
+- Controladores: dashboard, descargas SAT, CFDI, RFC, suscripciones y webhooks.
+- API JSON para metricas del dashboard y polling de estado de descargas.
+- Jobs de cola: procesamiento SAT, validacion de estatus CFDI y alerta de cancelacion.
+- Servicios de dominio: SAT Web Service, parser CFDI, validador e.firma, storage cifrado, reportes fiscales y PAC.
+- Modelos base: `User`, `Rfc`, `Cfdi`, `CfdiConcepto`, `DescargaJob`, `Suscripcion`.
+- Assets publicos: `efirma.js`, `descarga.js`, `dashboard.js`.
+- Vistas Blade para dashboard, CFDI, descargas, RFC, planes y pantallas auth base.
+
+En Hostinger con PHP CLI 8.0, sube los archivos y limpia cache desde hPanel si esta disponible. No ejecutes `php artisan` por SSH.
