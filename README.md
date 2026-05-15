@@ -11,7 +11,9 @@ Base Laravel 11 para validar que Hostinger Business acepta el stack definido par
 - SSH habilitado
 - Cron Jobs habilitados
 
-## Instalacion por SSH en Hostinger
+## Instalacion en Hostinger con PHP CLI 8.0
+
+Hostinger puede tener PHP web 8.2 en hPanel, pero PHP CLI 8.0 fijo en SSH. En ese caso no ejecutes `php artisan` por terminal.
 
 Primero sube y descomprime el proyecto en el servidor. Luego entra al directorio donde quedo el archivo `composer.json`.
 
@@ -33,25 +35,37 @@ o, si el proyecto quedo fuera de `public_html`:
 cd /home/USUARIO/domains/DOMINIO/contadormx
 ```
 
-Ya dentro de la carpeta que contiene `composer.json`, ejecutar:
+Si tu terminal muestra `getcwd: cannot access parent directories`, sal a home y vuelve a entrar a una ruta existente:
 
 ```bash
-composer install --no-dev --optimize-autoloader
-cp .env.example .env
-php artisan key:generate
-php artisan migrate --force
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+cd ~
+pwd
+ls
 ```
 
-En `.env`, completar los valores reales de MySQL de Hostinger:
+Ya dentro de la carpeta que contiene `composer.json`, ejecutar solo Composer para descargar `vendor`:
 
-```dotenv
-DB_DATABASE=nombre_base
-DB_USERNAME=usuario_base
-DB_PASSWORD=password_base
+```bash
+composer install --no-dev --optimize-autoloader --ignore-platform-req=php --no-scripts
 ```
+
+No ejecutes `php artisan` por SSH si `php -v` devuelve 8.0.
+
+Despues abre en el navegador:
+
+```text
+https://TU-DOMINIO/hostinger-install.php
+```
+
+El instalador temporal usa PHP web 8.2, crea `.env`, prueba MySQL, ejecuta migraciones y genera cache.
+
+Clave inicial del instalador:
+
+```text
+cambia-esta-clave
+```
+
+Por seguridad, edita `public/hostinger-install.php` y cambia `$installerPassword` antes de abrirlo en produccion. Cuando termine, elimina ese archivo.
 
 ## Documento raiz
 
