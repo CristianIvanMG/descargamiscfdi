@@ -4,6 +4,7 @@
 /public/hostinger-install.php
 /vendor
 .env
+.env.example
 .env.backup
 .env.production
 auth.json

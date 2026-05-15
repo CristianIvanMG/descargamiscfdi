@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'name' => env('APP_NAME', 'ContadorMx'),
+    'name' => env('APP_NAME', 'ContaPro'),
     'env' => env('APP_ENV', 'production'),
     'debug' => (bool) env('APP_DEBUG', false),
-    'url' => env('APP_URL', 'https://xml.contadormx.net'),
+    'url' => env('APP_URL', 'https://descargamiscfdi.com'),
     'force_https' => (bool) env('APP_FORCE_HTTPS', true),
     'timezone' => env('APP_TIMEZONE', 'America/Mexico_City'),
     'locale' => env('APP_LOCALE', 'es'),

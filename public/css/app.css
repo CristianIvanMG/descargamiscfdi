@@ -278,6 +278,34 @@ body {
     margin: 0;
 }
 
+.advantage-card {
+    background: #f8fafc;
+    border: 1px solid var(--cmx-border);
+    border-radius: 8px;
+    padding: 1.25rem;
+}
+
+.advantage-mark {
+    background: var(--cmx-green);
+    border-radius: 999px;
+    box-shadow: 0 0 0 0.35rem rgba(5, 150, 105, 0.12);
+    display: block;
+    height: 0.8rem;
+    margin-bottom: 1rem;
+    width: 0.8rem;
+}
+
+.advantage-card h3 {
+    font-size: 1.1rem;
+    font-weight: 850;
+    margin-bottom: 0.5rem;
+}
+
+.advantage-card p {
+    color: var(--cmx-muted);
+    margin: 0;
+}
+
 .status-dot {
     width: 0.75rem;
     height: 0.75rem;

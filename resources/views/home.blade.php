@@ -87,6 +87,22 @@
 
     <section class="py-4 py-lg-5 bg-white">
         <div class="container">
+            <div class="section-heading mb-4">
+                <h2>{{ __('app.home.advantage_title') }}</h2>
+                <p>{{ __('app.home.advantage_subtitle') }}</p>
+            </div>
+            <div class="row g-3 mb-4">
+                @foreach (__('app.home.advantages') as $advantage)
+                    <div class="col-12 col-lg-4">
+                        <div class="advantage-card h-100">
+                            <span class="advantage-mark" aria-hidden="true"></span>
+                            <h3>{{ $advantage['title'] }}</h3>
+                            <p>{{ $advantage['body'] }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
             <div class="row g-4">
                 <div class="col-12 col-xl-7">
                     <div class="panel h-100" x-data="{ showDetails: true }">

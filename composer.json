@@ -1,12 +1,12 @@
 {
-    "name": "contadormx/xml-contadormx",
+    "name": "contapro/descargamiscfdi",
     "type": "project",
-    "description": "ContadorMx SaaS web para descarga y analisis de CFDI del SAT.",
+    "description": "ContaPro SaaS web para descarga y analisis de CFDI del SAT.",
     "keywords": [
         "laravel",
         "cfdi",
         "sat",
-        "contadormx"
+        "contapro"
     ],
     "license": "proprietary",
     "require": {

@@ -1,6 +1,6 @@
-# ContadorMx - Paso 1
+# ContaPro - DescargaMisCFDI.com
 
-Base Laravel 11 para validar que Hostinger Business acepta el stack definido para `xml.contadormx.net`.
+Base Laravel 11 para validar que Hostinger Business acepta el stack definido para `descargamiscfdi.com`.
 
 ## Requisitos del servidor
 
@@ -32,7 +32,7 @@ cd /home/USUARIO/domains/DOMINIO/public_html
 o, si el proyecto quedo fuera de `public_html`:
 
 ```bash
-cd /home/USUARIO/domains/DOMINIO/contadormx
+cd /home/USUARIO/domains/DOMINIO/descargamiscfdi
 ```
 
 Si tu terminal muestra `getcwd: cannot access parent directories`, sal a home y vuelve a entrar a una ruta existente:
@@ -94,7 +94,7 @@ Si hPanel no permite apuntar directamente a `public/`, subir el proyecto fuera d
 Cuando el proyecto ya este instalado, agregar este cron en hPanel:
 
 ```bash
-* * * * * cd /home/USUARIO/domains/xml.contadormx.net && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /home/USUARIO/domains/descargamiscfdi.com/public_html && php artisan schedule:run >> /dev/null 2>&1
 ```
 
 La ruta exacta cambia segun el usuario de Hostinger.
