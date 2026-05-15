@@ -98,3 +98,11 @@ Cuando el proyecto ya este instalado, agregar este cron en hPanel:
 ```
 
 La ruta exacta cambia segun el usuario de Hostinger.
+
+## Seguridad aplicada en fase 1
+
+- El instalador temporal `public/hostinger-install.php` debe eliminarse despues de instalar.
+- `.htaccess` raiz bloquea acceso web a `vendor`, `storage`, `config`, `.env`, `composer.json`, backups y logs.
+- `public/.htaccess` solo permite ejecutar `index.php` y bloquea PHP suelto dentro de `public`.
+- Laravel agrega headers de seguridad: CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy` y `Permissions-Policy`.
+- Cookies de sesion preparadas para `secure`, `http_only`, cifrado y `same_site=lax`.

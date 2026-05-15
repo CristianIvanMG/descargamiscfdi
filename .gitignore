@@ -1,6 +1,7 @@
 /.phpunit.cache
 /node_modules
 /public/build
+/public/hostinger-install.php
 /vendor
 .env
 .env.backup
