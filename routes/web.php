@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
 Route::get('/favicon.ico', fn () => response(status: 204));
-Route::view('/login', 'auth.login')->name('login');
+Route::get('/login', [LoginController::class, 'create'])->name('login');
 Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1')->name('login.store');
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
 Route::view('/registro', 'auth.register')->name('register');

@@ -7,6 +7,7 @@
 @section('content')
     <section class="auth-screen">
         <div class="auth-shell">
+            <a class="back-home-button" href="{{ url('/') }}" aria-label="Volver a Home">←</a>
             <a class="auth-brand" href="{{ url('/') }}">ContaPro</a>
             <div class="auth-panel-card">
                 <div class="auth-copy">

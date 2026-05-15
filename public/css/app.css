@@ -481,6 +481,28 @@ a {
     margin-bottom: 1.25rem;
 }
 
+.back-home-button {
+    align-items: center;
+    background: #e9eef4;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--blue-dark);
+    display: inline-flex;
+    font-size: 1.2rem;
+    font-weight: 900;
+    height: 42px;
+    justify-content: center;
+    margin-right: 0.75rem;
+    width: 42px;
+}
+
+.back-home-button:hover,
+.back-home-button:focus {
+    background: var(--green);
+    color: var(--white);
+    outline: 3px solid rgba(0, 99, 65, 0.16);
+}
+
 .auth-panel-card {
     align-items: stretch;
     background: var(--white);
@@ -631,6 +653,49 @@ a {
     min-height: 46px;
     padding: 0.7rem 0.8rem;
     width: 100%;
+}
+
+.math-field-wrap {
+    position: relative;
+}
+
+.math-field-wrap span {
+    align-items: center;
+    background: #b42318;
+    border-radius: 50%;
+    color: var(--white);
+    display: none;
+    font-size: 0.78rem;
+    font-weight: 900;
+    height: 22px;
+    justify-content: center;
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+}
+
+.math-field-wrap.math-error input {
+    border-color: #b42318;
+    box-shadow: 0 0 0 0.18rem rgba(180, 35, 24, 0.12);
+    animation: loginShake 0.18s ease-in-out 2;
+}
+
+.math-field-wrap.math-error span {
+    display: inline-flex;
+}
+
+@keyframes loginShake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    33% {
+        transform: translateX(-4px);
+    }
+    66% {
+        transform: translateX(4px);
+    }
 }
 
 .auth-card input:focus {
