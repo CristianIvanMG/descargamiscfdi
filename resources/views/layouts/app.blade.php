@@ -43,10 +43,8 @@
             </button>
             <div id="mainNav" class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/#herramientas') }}">Herramientas</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/#funcionalidades') }}">Funcionalidades</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/#seguridad') }}">Seguridad</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url('/#faq') }}">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('/#como-funciona') }}">Cómo funciona</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('/#para-quien') }}">Para quién es</a></li>
                     <li class="nav-item"><a class="nav-link" href="{{ url('/login') }}">Entrar</a></li>
                     <li class="nav-item"><a class="btn btn-primary btn-sm ms-lg-2" href="{{ url('/registro') }}">Crear cuenta</a></li>
                 </ul>

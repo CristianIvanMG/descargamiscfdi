@@ -1,32 +1,29 @@
 @extends('layouts.app', [
-    'title' => 'Crear cuenta gratis | ContaPro',
-    'metaDescription' => 'Crea tu perfil privado en ContaPro para preparar descargas masivas de XML CFDI del SAT, administrar RFC y consultar tu dashboard fiscal.',
+    'title' => 'Crear cuenta | ContaPro',
+    'metaDescription' => 'Crea tu cuenta en ContaPro para descargar y ordenar CFDI emitidos y recibidos del SAT.',
 ])
 
 @section('content')
-    <section class="final-register">
+    <section class="auth-section">
         <div class="container">
-            <div class="final-register-grid">
+            <div class="auth-grid">
                 <div>
-                    <span class="section-eyebrow">Perfil privado</span>
-                    <h1 class="display-5 fw-bold">Crea tu cuenta ContaPro</h1>
-                    <p>Este registro conecta con el flujo de fase 2: dashboard, RFC administrados, nueva descarga SAT, estado de jobs, listado CFDI y planes.</p>
-                    <ul class="check-list">
-                        <li>Panel privado para tus RFC.</li>
-                        <li>Descarga de CFDI emitidos y recibidos.</li>
-                        <li>Preparado para reportes y validaciones.</li>
-                    </ul>
+                    <span class="eyebrow">Cuenta privada</span>
+                    <h1>Regístrate para probar ContaPro</h1>
+                    <p>Solo necesitamos tu correo y contraseña. Dentro del perfil podrás agregar tus datos fiscales, clientes, RFC y preferencias cuando lo decidas.</p>
                 </div>
-                <form class="landing-card" action="{{ url('/dashboard') }}" method="get" aria-label="Registro ContaPro">
-                    <h2>Datos iniciales</h2>
-                    <p>En la siguiente fase se conectará autenticación real. Por ahora este flujo te lleva al panel.</p>
-                    <label for="name">Nombre</label>
-                    <input id="name" name="name" type="text" placeholder="Tu nombre" required>
-                    <label for="email">Correo</label>
-                    <input id="email" name="email" type="email" value="{{ request('email') }}" placeholder="tu@empresa.com" required>
-                    <label for="rfc">RFC principal</label>
-                    <input id="rfc" name="rfc" type="text" value="{{ request('rfc') }}" maxlength="13" placeholder="RFC a revisar" required>
-                    <button class="btn btn-primary btn-full" type="submit">Entrar al dashboard</button>
+                <form class="auth-card" action="{{ url('/dashboard') }}" method="get" aria-label="Registro ContaPro">
+                    <label for="email">Correo electrónico</label>
+                    <input id="email" name="email" type="email" value="{{ request('email') }}" placeholder="tu@despacho.com" autocomplete="email" required>
+
+                    <label for="password">Contraseña</label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+
+                    <label for="password_confirmation">Confirmar contraseña</label>
+                    <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" minlength="8" required>
+
+                    <button class="btn btn-primary btn-full" type="submit">Crear cuenta</button>
+                    <p>Después podrás completar tu perfil fiscal desde el panel privado.</p>
                 </form>
             </div>
         </div>
