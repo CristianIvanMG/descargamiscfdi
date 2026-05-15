@@ -12,16 +12,16 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-white border-bottom">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="{{ route('home') }}">{{ config('app.name') }}</a>
+            <a class="navbar-brand fw-bold" href="{{ url('/') }}">{{ config('app.name') }}</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="{{ __('app.nav.toggle') }}">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div id="mainNav" class="collapse navbar-collapse">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="{{ route('dashboard') }}">{{ __('app.nav.dashboard') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('descargas.create') }}">{{ __('app.nav.downloads') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('cfdi.index') }}">{{ __('app.nav.cfdi') }}</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ route('suscripcion.planes') }}">{{ __('app.nav.plans') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('/dashboard') }}">{{ __('app.nav.dashboard') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('/descargas/nueva') }}">{{ __('app.nav.downloads') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('/cfdi') }}">{{ __('app.nav.cfdi') }}</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url('/suscripcion/planes') }}">{{ __('app.nav.plans') }}</a></li>
                 </ul>
             </div>
         </div>

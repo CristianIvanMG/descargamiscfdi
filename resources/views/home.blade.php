@@ -10,7 +10,7 @@
                     <p class="text-secondary mb-0">{{ __('app.home.subtitle') }}</p>
                 </div>
                 <div class="d-flex align-items-start">
-                    <a class="btn btn-primary" href="{{ route('dashboard') }}">{{ __('app.nav.dashboard') }}</a>
+                    <a class="btn btn-primary" href="{{ url('/dashboard') }}">{{ __('app.nav.dashboard') }}</a>
                 </div>
             </div>
 
