@@ -2,7 +2,31 @@
 
 declare(strict_types=1);
 
-$root = dirname(__DIR__);
+$documentRoot = isset($_SERVER['DOCUMENT_ROOT']) ? rtrim((string) $_SERVER['DOCUMENT_ROOT'], '/\\') : '';
+$rootCandidates = array_unique(array_filter([
+    dirname(__DIR__),
+    __DIR__,
+    $documentRoot,
+    $documentRoot !== '' ? dirname($documentRoot) : '',
+    $documentRoot !== '' ? dirname($documentRoot).'/public_html' : '',
+]));
+
+$root = null;
+
+foreach ($rootCandidates as $candidate) {
+    if (
+        file_exists($candidate.'/composer.json')
+        && file_exists($candidate.'/bootstrap/app.php')
+        && file_exists($candidate.'/vendor/autoload.php')
+    ) {
+        $root = $candidate;
+        break;
+    }
+}
+
+$fallbackRoot = file_exists(dirname(__DIR__).'/composer.json') ? dirname(__DIR__) : __DIR__;
+$root ??= $fallbackRoot;
+
 $envPath = $root.'/.env';
 $envExamplePath = $root.'/.env.example';
 $vendorPath = $root.'/vendor/autoload.php';
@@ -51,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (! file_exists($vendorPath)) {
-        $errors[] = 'No existe vendor/autoload.php. Primero ejecuta composer install con --ignore-platform-req=php --no-scripts.';
+        $errors[] = 'No existe vendor/autoload.php en la ruta detectada: '.$root.'. Si ya instalaste Composer, el instalador esta en otra carpeta. Busca la ruta con: find $HOME -name autoload.php | grep vendor';
     }
 
     if (! file_exists($envExamplePath)) {
@@ -173,6 +197,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endforeach; ?>
 
         <form method="post">
+            <p class="muted">Ruta detectada del proyecto: <code><?= htmlspecialchars($root, ENT_QUOTES, 'UTF-8') ?></code></p>
+            <p class="muted">Vendor esperado: <code><?= htmlspecialchars($vendorPath, ENT_QUOTES, 'UTF-8') ?></code></p>
+
             <label for="installer_password">Clave del instalador</label>
             <input id="installer_password" name="installer_password" type="password" required>
 
