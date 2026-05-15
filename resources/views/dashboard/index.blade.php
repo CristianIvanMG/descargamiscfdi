@@ -27,12 +27,18 @@
                     <h1>Dashboard</h1>
                     <p>Resumen fiscal del mes actual</p>
                 </div>
-                <div class="workspace-user">
-                    <span>C</span>
-                    <div>
-                        <strong>Contador</strong>
-                        <small>Cuenta pendiente de perfil</small>
+                <div class="workspace-actions">
+                    <div class="workspace-user">
+                        <span>{{ mb_substr(auth()->user()?->name ?? 'C', 0, 1) }}</span>
+                        <div>
+                            <strong>{{ auth()->user()?->name ?? 'Contador' }}</strong>
+                            <small>{{ auth()->user()?->email ?? 'Cuenta verificada' }}</small>
+                        </div>
                     </div>
+                    <form action="{{ url('/logout') }}" method="post">
+                        @csrf
+                        <button class="workspace-logout" type="submit">Salir</button>
+                    </form>
                 </div>
             </header>
 

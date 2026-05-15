@@ -16,12 +16,13 @@
                     <div class="auth-trust">La cuenta se activa solo después de confirmar el correo.</div>
                 </div>
 
-                <form class="auth-card" action="{{ url('/registro/confirmacion') }}" method="get" aria-label="Registro ContaPro">
+                <form class="auth-card" action="{{ url('/registro') }}" method="post" aria-label="Registro ContaPro">
+                    @csrf
                     <label for="name">Nombre completo</label>
-                    <input id="name" name="name" type="text" autocomplete="name" required>
+                    <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" required>
 
                     <label for="email">Correo electrónico</label>
-                    <input id="email" name="email" type="email" value="{{ request('email') }}" autocomplete="email" required>
+                    <input id="email" name="email" type="email" value="{{ old('email', request('email')) }}" autocomplete="email" required>
 
                     <label for="password">Contraseña</label>
                     <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
@@ -31,6 +32,10 @@
 
                     <button class="btn btn-primary btn-full" type="submit">Crear cuenta</button>
                     <p>Te enviaremos un correo para confirmar tu cuenta antes de continuar.</p>
+
+                    @if ($errors->any())
+                        <div class="auth-error">{{ $errors->first() }}</div>
+                    @endif
                 </form>
             </div>
         </div>

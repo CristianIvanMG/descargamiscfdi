@@ -562,6 +562,52 @@ a {
     color: var(--muted);
 }
 
+.auth-mail-target,
+.auth-trust-light {
+    background: var(--gray-soft);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--blue-dark);
+    font-weight: 800;
+    margin: 1rem 0;
+    padding: 0.9rem 1rem;
+}
+
+.auth-help {
+    font-size: 0.95rem;
+    margin-top: 0.75rem;
+}
+
+.auth-success,
+.auth-error {
+    border-radius: 8px;
+    font-weight: 800;
+    margin: 1rem 0;
+    padding: 0.9rem 1rem;
+}
+
+.auth-success {
+    background: #e6f4ef;
+    border: 1px solid rgba(0, 99, 65, 0.22);
+    color: var(--green);
+}
+
+.auth-error {
+    background: #fff1f0;
+    border: 1px solid rgba(180, 35, 24, 0.24);
+    color: #b42318;
+}
+
+.resend-form {
+    margin: 1rem 0;
+}
+
+.auth-secondary-link {
+    color: var(--blue);
+    display: inline-flex;
+    font-weight: 800;
+}
+
 .auth-section h1 {
     color: var(--blue-dark);
 }
@@ -754,6 +800,28 @@ a {
     display: flex;
     gap: 0.75rem;
     padding: 0.45rem 0.85rem 0.45rem 0.45rem;
+}
+
+.workspace-actions {
+    align-items: center;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.workspace-logout {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--blue-dark);
+    font-weight: 800;
+    min-height: 38px;
+    padding: 0.45rem 0.8rem;
+}
+
+.workspace-logout:hover,
+.workspace-logout:focus {
+    border-color: var(--green);
+    color: var(--green);
 }
 
 .workspace-user > span {
