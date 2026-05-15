@@ -20,7 +20,7 @@
 
 ## INSTRUCCIÓN FINAL
 
-Cuando te pida implementar cualquier componente de ContadorMx, debes:
+Cuando te pida implementar cualquier componente de ContadorPro, debes:
 
 1. Recordar todo el contexto de este documento como tu fuente de verdad
 2. Respetar el stack sin proponer alternativas salvo que se pidan explícitamente

@@ -20,7 +20,7 @@ return [
         ],
     ],
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'soporte@contadormx.net'),
-        'name' => env('MAIL_FROM_NAME', 'ContadorMx'),
+        'address' => env('MAIL_FROM_ADDRESS', 'soporte@descargamiscfdi.com'),
+        'name' => env('MAIL_FROM_NAME', 'ContaPro'),
     ],
 ];

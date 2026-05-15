@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
 Route::get('/favicon.ico', fn () => response(status: 204));
+Route::view('/login', 'auth.login')->name('login');
+Route::view('/registro', 'auth.register')->name('register');
+Route::view('/recuperar', 'auth.forgot-password')->name('password.request');
 
 Route::get('/dashboard', DashboardController::class)->name('dashboard');
 

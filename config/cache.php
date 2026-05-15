@@ -20,5 +20,5 @@ return [
             'lock_path' => storage_path('framework/cache/data'),
         ],
     ],
-    'prefix' => env('CACHE_PREFIX', 'contadormx_cache_'),
+    'prefix' => env('CACHE_PREFIX', 'contapro_cache_'),
 ];
