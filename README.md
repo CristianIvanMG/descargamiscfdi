@@ -51,10 +51,22 @@ composer install --no-dev --optimize-autoloader --ignore-platform-req=php --no-s
 
 No ejecutes `php artisan` por SSH si `php -v` devuelve 8.0.
 
-Despues abre en el navegador:
+Despues abre en el navegador. Si el dominio apunta directo a `public/`, usa:
 
 ```text
 https://TU-DOMINIO/hostinger-install.php
+```
+
+Si Hostinger esta sirviendo el proyecto completo desde `public_html`, primero sube tambien el archivo `.htaccess` de la raiz del proyecto y usa:
+
+```text
+https://TU-DOMINIO/hostinger-install.php
+```
+
+Sin ese `.htaccess` de raiz, Hostinger lo mostrara temporalmente en:
+
+```text
+https://TU-DOMINIO/public/hostinger-install.php
 ```
 
 El instalador temporal usa PHP web 8.2, crea `.env`, prueba MySQL, ejecuta migraciones y genera cache.

@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    Options -Indexes
+
+    RewriteEngine On
+
+    RewriteRule ^(app|bootstrap|config|database|lang|resources|routes|storage|vendor)(/|$) - [F,L]
+    RewriteRule ^(\.env|\.env\..*|artisan|composer\.(json|lock)|package(-lock)?\.json|README\.md)$ - [F,L]
+
+    RewriteCond %{REQUEST_URI} !^/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<FilesMatch "^(\.env|\.env\..*|artisan|composer\.(json|lock)|package(-lock)?\.json|README\.md)$">
+    Require all denied
+</FilesMatch>
