@@ -12,7 +12,10 @@ Route::view('/', 'home')->name('home');
 Route::get('/favicon.ico', fn () => response(status: 204));
 Route::view('/login', 'auth.login')->name('login');
 Route::view('/registro', 'auth.register')->name('register');
+Route::view('/registro/confirmacion', 'auth.verify-email')->name('verification.notice');
+Route::view('/registro/confirmado', 'auth.confirmed')->name('verification.confirmed');
 Route::view('/recuperar', 'auth.forgot-password')->name('password.request');
+Route::view('/perfil', 'perfil.index')->name('profile');
 
 Route::get('/dashboard', DashboardController::class)->name('dashboard');
 

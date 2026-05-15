@@ -17,8 +17,9 @@
                 <div class="row g-3">
                     <div class="col-12 col-md-4">
                         <label class="form-label" for="rfc">{{ __('app.rfc.rfc') }}</label>
-                        <input id="rfc" class="form-control" name="rfc" maxlength="13" required aria-describedby="rfcHelp">
+                        <input id="rfc" class="form-control" name="rfc" maxlength="13" required aria-describedby="rfcHelp rfcFeedback" data-rfc-mask>
                         <div id="rfcHelp" class="form-text">{{ __('app.descarga.rfc_help') }}</div>
+                        <div id="rfcFeedback" class="form-text rfc-feedback" data-rfc-feedback="rfc">Formato: 12 o 13 caracteres con homoclave.</div>
                     </div>
                     <div class="col-12 col-md-4">
                         <label class="form-label" for="fecha_inicio">{{ __('app.descarga.start_date') }}</label>

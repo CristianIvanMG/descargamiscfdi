@@ -35,6 +35,7 @@
     @stack('head')
 </head>
 <body>
+    @unless ($hideNav ?? false)
     <nav class="navbar navbar-expand-lg border-bottom">
         <div class="container">
             <a class="navbar-brand fw-bold" href="{{ url('/') }}">ContaPro</a>
@@ -51,11 +52,13 @@
             </div>
         </div>
     </nav>
+    @endunless
     <main>
         @yield('content')
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/rfc-mask.js') }}"></script>
     @stack('scripts')
 </body>
 </html>

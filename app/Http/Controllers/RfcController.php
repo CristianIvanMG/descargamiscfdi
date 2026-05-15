@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\RfcValido;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class RfcController
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'rfc' => ['required', 'string', 'min:12', 'max:13'],
+            'rfc' => ['required', 'string', 'min:12', 'max:13', new RfcValido()],
             'razon_social' => ['required', 'string', 'max:255'],
         ]);
 

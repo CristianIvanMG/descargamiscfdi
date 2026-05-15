@@ -17,7 +17,8 @@
                 <div class="row g-3 align-items-end">
                     <div class="col-12 col-md-4">
                         <label class="form-label" for="rfc">{{ __('app.rfc.rfc') }}</label>
-                        <input id="rfc" class="form-control" name="rfc" maxlength="13" required>
+                        <input id="rfc" class="form-control" name="rfc" maxlength="13" required data-rfc-mask aria-describedby="rfcFeedback">
+                        <div id="rfcFeedback" class="form-text rfc-feedback" data-rfc-feedback="rfc">Formato: 12 o 13 caracteres con homoclave.</div>
                     </div>
                     <div class="col-12 col-md-6">
                         <label class="form-label" for="razon_social">{{ __('app.rfc.business_name') }}</label>

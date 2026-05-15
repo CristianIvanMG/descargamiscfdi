@@ -1,67 +1,100 @@
-@extends('layouts.app', ['title' => __('app.dashboard.title')])
+@extends('layouts.app', [
+    'title' => 'Dashboard fiscal | ContaPro',
+    'hideNav' => true,
+])
 
 @section('content')
-    <section class="app-shell py-4" x-data="contadorMxDashboard('{{ url('/api/dashboard/metricas') }}')" x-init="load()">
-        <div class="container">
-            <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
+    <div class="app-workspace">
+        <aside class="app-sidebar" aria-label="Menú fiscal">
+            <a class="workspace-brand" href="{{ url('/dashboard') }}">
+                <span>CP</span>
+                <strong>ContaPro</strong>
+            </a>
+            <nav>
+                <a class="active" href="{{ url('/dashboard') }}"><span>▦</span>Dashboard</a>
+                <a href="{{ url('/cfdi?tipo=emitidos') }}"><span>▤</span>CFDI Emitidos</a>
+                <a href="{{ url('/cfdi?tipo=recibidos') }}"><span>▥</span>CFDI Recibidos</a>
+                <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
+                <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
+                <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
+                <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
+            </nav>
+        </aside>
+
+        <main class="workspace-main">
+            <header class="workspace-topbar">
                 <div>
-                    <h1 class="h3 fw-bold mb-1">{{ __('app.dashboard.heading') }}</h1>
-                    <p class="text-secondary mb-0">{{ __('app.dashboard.subtitle') }}</p>
+                    <h1>Dashboard</h1>
+                    <p>Resumen fiscal del mes actual</p>
                 </div>
-                <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">{{ __('app.dashboard.new_download') }}</a>
-            </div>
-
-            <div class="row g-3 mb-4">
-                @foreach ([
-                    ['key' => 'cfdi_emitidos', 'label' => __('app.dashboard.issued')],
-                    ['key' => 'cfdi_recibidos', 'label' => __('app.dashboard.received')],
-                    ['key' => 'iva_trasladado', 'label' => __('app.dashboard.vat_charged')],
-                    ['key' => 'iva_acreditable', 'label' => __('app.dashboard.vat_creditable')],
-                ] as $item)
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="metric-card">
-                            <span class="metric-label">{{ $item['label'] }}</span>
-                            <strong x-text="metricas.{{ $item['key'] }}"></strong>
-                        </div>
+                <div class="workspace-user">
+                    <span>C</span>
+                    <div>
+                        <strong>Contador</strong>
+                        <small>Cuenta pendiente de perfil</small>
                     </div>
-                @endforeach
-            </div>
-
-            <div class="panel">
-                <h2 class="h5 mb-3">{{ __('app.dashboard.chart_title') }}</h2>
-                <div class="chart-box">
-                    <canvas id="dashboardChart" aria-label="{{ __('app.dashboard.chart_label') }}" role="img"></canvas>
                 </div>
-            </div>
-        </div>
-    </section>
+            </header>
+
+            <section class="orientation-box">
+                <div>
+                    <strong>Empieza descargando los CFDI de tu cliente para ver información aquí.</strong>
+                    <p>Cuando agregues un RFC y solicites la descarga masiva, este panel mostrará emitidos, recibidos, ingresos, gastos e IVA.</p>
+                </div>
+                <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">Nueva descarga</a>
+            </section>
+
+            <section class="fiscal-kpi-grid" aria-label="Indicadores fiscales">
+                @foreach ([
+                    ['label' => 'Total CFDI emitidos', 'value' => '0', 'note' => 'Mes actual'],
+                    ['label' => 'Total CFDI recibidos', 'value' => '0', 'note' => 'Mes actual'],
+                    ['label' => 'Ingresos acumulados', 'value' => '$0.00', 'note' => 'Según CFDI emitidos'],
+                    ['label' => 'Gastos deducibles detectados', 'value' => '$0.00', 'note' => 'Según CFDI recibidos'],
+                    ['label' => 'IVA trasladado / acreditable', 'value' => '$0.00 / $0.00', 'note' => 'Base para revisión'],
+                ] as $metric)
+                    <article class="fiscal-kpi">
+                        <span>{{ $metric['label'] }}</span>
+                        <strong>{{ $metric['value'] }}</strong>
+                        <small>{{ $metric['note'] }}</small>
+                    </article>
+                @endforeach
+            </section>
+
+            <section class="workspace-panel">
+                <div class="panel-header">
+                    <h2>Actividad reciente de CFDI</h2>
+                    <a href="{{ url('/cfdi') }}">Ver todos</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="fiscal-table">
+                        <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo</th>
+                            <th>RFC</th>
+                            <th>Concepto</th>
+                            <th class="text-end">Total</th>
+                            <th>Estatus</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach ([
+                            ['fecha' => 'Pendiente', 'tipo' => 'Emitido', 'rfc' => 'Sin RFC', 'concepto' => 'Descarga inicial pendiente', 'total' => '$0.00', 'estatus' => 'Sin datos'],
+                            ['fecha' => 'Pendiente', 'tipo' => 'Recibido', 'rfc' => 'Sin RFC', 'concepto' => 'Agrega un cliente para iniciar', 'total' => '$0.00', 'estatus' => 'Sin datos'],
+                        ] as $row)
+                            <tr>
+                                <td>{{ $row['fecha'] }}</td>
+                                <td>{{ $row['tipo'] }}</td>
+                                <td>{{ $row['rfc'] }}</td>
+                                <td>{{ $row['concepto'] }}</td>
+                                <td class="text-end">{{ $row['total'] }}</td>
+                                <td><span class="status-pill">{{ $row['estatus'] }}</span></td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
 @endsection
-
-@push('scripts')
-    <script src="{{ asset('js/dashboard.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const canvas = document.getElementById('dashboardChart');
-
-            if (!canvas || typeof Chart === 'undefined') {
-                return;
-            }
-
-            new Chart(canvas, {
-                type: 'bar',
-                data: {
-                    labels: ['{{ __('app.dashboard.issued') }}', '{{ __('app.dashboard.received') }}'],
-                    datasets: [{
-                        label: '{{ __('app.nav.cfdi') }}',
-                        data: [0, 0],
-                        backgroundColor: ['#1d4ed8', '#059669']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
-                }
-            });
-        });
-    </script>
-@endpush
