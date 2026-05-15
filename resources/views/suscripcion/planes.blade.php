@@ -15,7 +15,7 @@
             <div class="row g-3">
                 @foreach ($planes as $plan)
                     <div class="col-12 col-md-4">
-                        <form class="panel h-100" method="post" action="{{ route('suscripcion.checkout') }}">
+                        <form class="panel h-100" method="post" action="{{ url('/suscripcion/checkout') }}">
                             @csrf
                             <input type="hidden" name="plan" value="{{ $plan['clave'] }}">
                             <h2 class="h5">{{ $plan['nombre'] }}</h2>

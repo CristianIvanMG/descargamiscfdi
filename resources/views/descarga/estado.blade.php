@@ -1,7 +1,7 @@
 @extends('layouts.app', ['title' => __('app.descarga.status_title')])
 
 @section('content')
-    <section class="app-shell py-4" x-data="contadorMxDescarga('{{ route('api.descargas.estado', $descarga) }}')" x-init="start()">
+    <section class="app-shell py-4" x-data="contadorMxDescarga('{{ url('/api/descargas/'.$descarga->getKey().'/estado') }}')" x-init="start()">
         <div class="container">
             <div class="panel">
                 <h1 class="h4 fw-bold">{{ __('app.descarga.status_title') }}</h1>

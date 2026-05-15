@@ -1,35 +1,92 @@
 @extends('layouts.app', ['title' => __('app.home.title')])
 
 @section('content')
-    <section class="app-shell py-4 py-lg-5">
+    <section class="hero-band">
         <div class="container">
-            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3 mb-4">
-                <div>
-                    <p class="text-uppercase text-primary fw-semibold small mb-2">{{ __('app.home.phase') }}</p>
-                    <h1 class="h2 fw-bold mb-2">{{ __('app.home.heading') }}</h1>
-                    <p class="text-secondary mb-0">{{ __('app.home.subtitle') }}</p>
+            <div class="row align-items-center g-4">
+                <div class="col-12 col-lg-6">
+                    <p class="trust-label mb-3">{{ __('app.home.phase') }}</p>
+                    <h1 class="hero-title mb-3">{{ __('app.home.heading') }}</h1>
+                    <p class="hero-copy mb-4">{{ __('app.home.subtitle') }}</p>
+                    <div class="d-flex flex-column flex-sm-row gap-2">
+                        <a class="btn btn-primary btn-lg" href="{{ url('/descargas/nueva') }}">{{ __('app.home.primary_cta') }}</a>
+                        <a class="btn btn-outline-primary btn-lg" href="{{ url('/dashboard') }}">{{ __('app.home.secondary_cta') }}</a>
+                    </div>
+                    <div class="trust-row mt-4" aria-label="{{ __('app.home.trust_label') }}">
+                        <span>{{ __('app.home.trust_web') }}</span>
+                        <span>{{ __('app.home.trust_key') }}</span>
+                        <span>{{ __('app.home.trust_sat') }}</span>
+                    </div>
                 </div>
-                <div class="d-flex align-items-start">
-                    <a class="btn btn-primary" href="{{ url('/dashboard') }}">{{ __('app.nav.dashboard') }}</a>
+                <div class="col-12 col-lg-6">
+                    <div class="product-preview" aria-label="{{ __('app.home.preview_label') }}">
+                        <div class="preview-toolbar">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <strong>{{ __('app.home.preview_title') }}</strong>
+                        </div>
+                        <div class="preview-grid">
+                            <div class="preview-main">
+                                <div class="preview-kpi">
+                                    <span>{{ __('app.dashboard.received') }}</span>
+                                    <strong>1,248</strong>
+                                </div>
+                                <div class="preview-kpi green">
+                                    <span>{{ __('app.dashboard.vat_creditable') }}</span>
+                                    <strong>$84,320</strong>
+                                </div>
+                                <div class="preview-bars">
+                                    <i style="height: 48%"></i>
+                                    <i style="height: 72%"></i>
+                                    <i style="height: 56%"></i>
+                                    <i style="height: 86%"></i>
+                                    <i style="height: 64%"></i>
+                                </div>
+                            </div>
+                            <div class="preview-side">
+                                <div class="secure-box">
+                                    <span class="status-dot" aria-hidden="true"></span>
+                                    <strong>{{ __('app.home.secure_title') }}</strong>
+                                    <p>{{ __('app.home.secure_body') }}</p>
+                                </div>
+                                <div class="download-box">
+                                    <span>{{ __('app.home.download_progress') }}</span>
+                                    <div class="progress" role="progressbar" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-bar" style="width: 72%"></div>
+                                    </div>
+                                    <strong>72%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="row g-3 mb-4">
-                @foreach ([
-                    ['label' => __('app.stack.backend'), 'value' => 'Laravel 11 + PHP 8.2'],
-                    ['label' => __('app.stack.database'), 'value' => 'MySQL 8'],
-                    ['label' => __('app.stack.queue'), 'value' => __('app.stack.queue_value')],
-                    ['label' => __('app.stack.storage'), 'value' => __('app.stack.storage_value')],
-                ] as $item)
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="metric-card h-100">
-                            <span class="metric-label">{{ $item['label'] }}</span>
-                            <strong>{{ $item['value'] }}</strong>
+    <section class="py-4 py-lg-5">
+        <div class="container">
+            <div class="section-heading mb-4">
+                <h2>{{ __('app.home.simple_title') }}</h2>
+                <p>{{ __('app.home.simple_subtitle') }}</p>
+            </div>
+            <div class="row g-3">
+                @foreach (__('app.home.steps') as $index => $step)
+                    <div class="col-12 col-md-4">
+                        <div class="step-card h-100">
+                            <span class="step-number">{{ $index + 1 }}</span>
+                            <h3>{{ $step['title'] }}</h3>
+                            <p>{{ $step['body'] }}</p>
                         </div>
                     </div>
                 @endforeach
             </div>
+        </div>
+    </section>
 
+    <section class="py-4 py-lg-5 bg-white">
+        <div class="container">
             <div class="row g-4">
                 <div class="col-12 col-xl-7">
                     <div class="panel h-100" x-data="{ showDetails: true }">
@@ -62,6 +119,16 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="final-cta py-4 py-lg-5">
+        <div class="container">
+            <div class="final-cta-inner">
+                <h2>{{ __('app.home.final_title') }}</h2>
+                <p>{{ __('app.home.final_body') }}</p>
+                <a class="btn btn-light btn-lg" href="{{ url('/descargas/nueva') }}">{{ __('app.home.primary_cta') }}</a>
             </div>
         </div>
     </section>

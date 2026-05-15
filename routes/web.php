@@ -9,6 +9,7 @@ use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->name('home');
+Route::get('/favicon.ico', fn () => response(status: 204));
 
 Route::get('/dashboard', DashboardController::class)->name('dashboard');
 

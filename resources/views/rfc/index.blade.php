@@ -12,7 +12,7 @@
                 <div class="alert alert-info">{{ session('status') }}</div>
             @endif
 
-            <form class="panel mb-4" method="post" action="{{ route('rfcs.store') }}">
+            <form class="panel mb-4" method="post" action="{{ url('/rfcs') }}">
                 @csrf
                 <div class="row g-3 align-items-end">
                     <div class="col-12 col-md-4">

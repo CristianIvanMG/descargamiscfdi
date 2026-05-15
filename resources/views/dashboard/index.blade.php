@@ -1,14 +1,14 @@
 @extends('layouts.app', ['title' => __('app.dashboard.title')])
 
 @section('content')
-    <section class="app-shell py-4" x-data="contadorMxDashboard('{{ route('api.dashboard.metricas') }}')" x-init="load()">
+    <section class="app-shell py-4" x-data="contadorMxDashboard('{{ url('/api/dashboard/metricas') }}')" x-init="load()">
         <div class="container">
             <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
                 <div>
                     <h1 class="h3 fw-bold mb-1">{{ __('app.dashboard.heading') }}</h1>
                     <p class="text-secondary mb-0">{{ __('app.dashboard.subtitle') }}</p>
                 </div>
-                <a class="btn btn-primary" href="{{ route('descargas.create') }}">{{ __('app.dashboard.new_download') }}</a>
+                <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">{{ __('app.dashboard.new_download') }}</a>
             </div>
 
             <div class="row g-3 mb-4">
