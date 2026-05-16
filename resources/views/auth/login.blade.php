@@ -29,7 +29,7 @@
                     <label for="password">Contraseña</label>
                     <input id="password" name="password" type="password" autocomplete="current-password" required>
 
-                    <label for="math_answer">Verificación anti-robot: {{ $mathQuestion }} = ?</label>
+                    <label for="math_answer">Verifica que no eres un bot: {{ $mathQuestion }} = ?</label>
                     <div class="math-field-wrap {{ session('math_failed') ? 'math-error' : '' }}">
                         <input id="math_answer" name="math_answer" type="number" inputmode="numeric" required aria-label="Resultado de la suma">
                         <span aria-hidden="true">!</span>

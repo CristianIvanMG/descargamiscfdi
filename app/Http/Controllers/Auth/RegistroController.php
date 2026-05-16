@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules\Password;
 use Throwable;
@@ -40,10 +41,12 @@ class RegistroController
             'password' => Hash::make($validated['password']),
         ]);
 
-        $user->profile()->create([
-            'primary_email' => $user->email,
-            'country' => 'México',
-        ]);
+        if (Schema::hasTable('user_profiles')) {
+            $user->profile()->create([
+                'primary_email' => $user->email,
+                'country' => 'México',
+            ]);
+        }
 
         if (! $this->sendConfirmationEmail($user)) {
             $user->delete();

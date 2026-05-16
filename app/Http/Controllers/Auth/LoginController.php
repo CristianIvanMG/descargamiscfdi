@@ -7,9 +7,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
-use Throwable;
 use Illuminate\Validation\ValidationException;
+use Throwable;
 
 class LoginController
 {
@@ -44,8 +45,6 @@ class LoginController
             $this->failLogin();
         }
 
-        $request->session()->regenerate();
-
         $user = $request->user();
 
         if (! $user->hasVerifiedEmail()) {
@@ -64,17 +63,18 @@ class LoginController
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            Log::warning('Verificación anti-robot fallida', [
+            Log::warning('Verificación anti-bot fallida', [
                 'email' => $credentials['email'],
                 'ip' => $request->ip(),
             ]);
 
             return redirect('/login')
                 ->withInput($request->only('email'))
-                ->withErrors(['math_answer' => 'Las credenciales no son válidas o la verificación no fue correcta.'])
+                ->withErrors(['math_answer' => 'No fue posible iniciar sesión.'])
                 ->with('math_failed', true);
         }
 
+        $request->session()->regenerate();
         $request->session()->put('session_created_at', time());
 
         Log::info('Login exitoso', [
@@ -83,6 +83,10 @@ class LoginController
         ]);
 
         try {
+            if (! Schema::hasTable('user_profiles')) {
+                return redirect()->intended('/dashboard');
+            }
+
             $user->loadMissing('profile');
 
             if (! $user->hasCompleteProfile()) {
@@ -96,8 +100,8 @@ class LoginController
                 'exception' => $exception,
             ]);
 
-            return redirect('/perfil')->withErrors([
-                'profile' => 'Ocurrió un problema al cargar tu información. Intenta nuevamente.',
+            return redirect('/dashboard')->withErrors([
+                'dashboard' => 'Ocurrió un problema al cargar tu información. Intenta nuevamente.',
             ]);
         }
     }
