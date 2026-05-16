@@ -31,15 +31,94 @@
                     <p>Panel operativo para emitidos, recibidos, montos e IVA.</p>
                 </div>
                 <div class="workspace-actions">
-                    <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">Descargar CFDI</a>
+                    <a class="btn btn-primary" href="{{ session('sat_authenticated') ? url('/descargas/nueva') : url('/dashboard#efirma-panel') }}">Descargar CFDI</a>
                 </div>
             </header>
 
+            @unless (session('sat_authenticated'))
+                <section class="sat-connection-status is-disconnected cfdi-blocker">
+                    <strong>Conexión con el SAT no establecida</strong>
+                    <p>Para solicitar descargas reales primero valida tu e.firma en Inicio. Puedes revisar la estructura de CFDI, pero no iniciar solicitudes hasta conectar con SAT.</p>
+                    <a class="btn btn-primary" href="{{ url('/dashboard#efirma-panel') }}">Conectar e.firma</a>
+                </section>
+            @endunless
+
             <section class="orientation-box">
                 <div>
-                    <strong>Resumen general</strong>
-                    <p>Consulta y filtra CFDI emitidos y recibidos desde una sola vista.</p>
+                    <strong>CFDI – Descarga y gestión</strong>
+                    <p>Consulta y descarga CFDI emitidos y recibidos del SAT.</p>
                 </div>
+            </section>
+
+            <section class="cfdi-flow-shell">
+                <div class="cfdi-main-tabs" role="tablist" aria-label="Tipo de CFDI">
+                    <button class="active" type="button" data-cfdi-tab="emitidos">CFDI Emitidos</button>
+                    <button type="button" data-cfdi-tab="recibidos">CFDI Recibidos</button>
+                </div>
+
+                @foreach ([
+                    'emitidos' => ['title' => 'CFDI Emitidos', 'type' => 'emitidos'],
+                    'recibidos' => ['title' => 'CFDI Recibidos', 'type' => 'recibidos'],
+                ] as $tabKey => $tab)
+                    <div class="cfdi-tab-panel {{ $tabKey === 'emitidos' ? 'active' : '' }}" data-cfdi-panel="{{ $tabKey }}">
+                        <div class="cfdi-step-grid">
+                            <article class="cfdi-step active">
+                                <span>1</span>
+                                <strong>Configura</strong>
+                                <p>Selecciona RFC, fecha inicio, fecha fin y tipo {{ $tab['type'] }}. Se recomienda descargar por mes.</p>
+                            </article>
+                            <article class="cfdi-step {{ session('sat_authenticated') ? 'done' : 'error' }}">
+                                <span>2</span>
+                                <strong>Autenticación SAT</strong>
+                                <p>{{ session('sat_authenticated') ? 'Sesión SAT validada correctamente.' : 'Primero valida tu e.firma en Inicio.' }}</p>
+                            </article>
+                            <article class="cfdi-step pending">
+                                <span>3</span>
+                                <strong>Solicita</strong>
+                                <p>Se crea la solicitud SAT y se guarda el RequestId para historial.</p>
+                            </article>
+                            <article class="cfdi-step pending">
+                                <span>4</span>
+                                <strong>Espera</strong>
+                                <p>Verifica estado: pendiente, en proceso, terminado o error.</p>
+                            </article>
+                            <article class="cfdi-step pending">
+                                <span>5</span>
+                                <strong>Descarga</strong>
+                                <p>Descarga paquetes ZIP/XML cuando el SAT los libere.</p>
+                            </article>
+                        </div>
+
+                        <form class="cfdi-request-panel" method="get" action="{{ url('/cfdi') }}">
+                            <input type="hidden" name="tipo" value="{{ $tab['type'] }}">
+                            <div>
+                                <label>RFC</label>
+                                <input name="rfc" value="{{ $filters['rfc'] }}" placeholder="RFC del perfil o cliente" data-rfc-mask>
+                            </div>
+                            <div>
+                                <label>Fecha inicio</label>
+                                <input name="fecha_inicio" type="date" value="{{ $filters['fecha_inicio'] }}">
+                            </div>
+                            <div>
+                                <label>Fecha fin</label>
+                                <input name="fecha_fin" type="date" value="{{ $filters['fecha_fin'] }}">
+                            </div>
+                            <div>
+                                <label>Tipo CFDI</label>
+                                <input value="{{ ucfirst($tab['type']) }}" readonly>
+                            </div>
+                            <button class="btn btn-primary" type="button" @disabled(! session('sat_authenticated'))>Solicitar descarga</button>
+                        </form>
+
+                        <div class="cfdi-status-row">
+                            <div class="cfdi-status active">Configura</div>
+                            <div class="cfdi-status pending">Solicitud enviada al SAT</div>
+                            <div class="cfdi-status processing">Procesando información</div>
+                            <div class="cfdi-status done">Listo para descarga</div>
+                            <div class="cfdi-status error">Error</div>
+                        </div>
+                    </div>
+                @endforeach
             </section>
 
             <section class="fiscal-kpi-grid" aria-label="Indicadores CFDI">
@@ -123,4 +202,19 @@
             </section>
         </main>
     </div>
+
+    <script>
+        (() => {
+            const tabs = document.querySelectorAll('[data-cfdi-tab]');
+            const panels = document.querySelectorAll('[data-cfdi-panel]');
+
+            tabs.forEach((tab) => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.cfdiTab;
+                    tabs.forEach((item) => item.classList.toggle('active', item === tab));
+                    panels.forEach((panel) => panel.classList.toggle('active', panel.dataset.cfdiPanel === target));
+                });
+            });
+        })();
+    </script>
 @endsection

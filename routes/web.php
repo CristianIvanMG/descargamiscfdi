@@ -35,16 +35,16 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             ->middleware('throttle:3,1')
             ->name('sat.auth');
 
+        Route::prefix('cfdi')->name('cfdi.')->group(function (): void {
+            Route::get('/', [CfdiController::class, 'index'])->name('index');
+            Route::get('/{cfdi}', [CfdiController::class, 'show'])->name('show');
+        });
+
         Route::middleware(App\Http\Middleware\EnsureSatIsAuthenticated::class)->group(function (): void {
             Route::prefix('descargas')->name('descargas.')->group(function (): void {
                 Route::get('/nueva', [DescargaController::class, 'create'])->name('create');
                 Route::post('/', [DescargaController::class, 'store'])->name('store');
                 Route::get('/{descargaJob}/estado', [DescargaController::class, 'show'])->name('show');
-            });
-
-            Route::prefix('cfdi')->name('cfdi.')->group(function (): void {
-                Route::get('/', [CfdiController::class, 'index'])->name('index');
-                Route::get('/{cfdi}', [CfdiController::class, 'show'])->name('show');
             });
 
             Route::middleware(App\Http\Middleware\EnsureMembershipAllowsAction::class)->group(function (): void {

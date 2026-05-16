@@ -1249,6 +1249,173 @@ a {
     width: 100%;
 }
 
+.cfdi-blocker {
+    margin: 1.25rem 1.5rem;
+}
+
+.cfdi-blocker .btn {
+    margin-top: 0.9rem;
+}
+
+.cfdi-flow-shell {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin: 1.25rem 1.5rem;
+    padding: 1.25rem;
+}
+
+.cfdi-main-tabs {
+    background: #eef3f8;
+    border-radius: 8px;
+    display: inline-flex;
+    gap: 0.3rem;
+    margin-bottom: 1rem;
+    padding: 0.3rem;
+}
+
+.cfdi-main-tabs button {
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    color: var(--blue-dark);
+    cursor: pointer;
+    font-weight: 900;
+    padding: 0.65rem 0.9rem;
+}
+
+.cfdi-main-tabs button.active {
+    background: var(--white);
+    box-shadow: var(--shadow);
+    color: var(--green);
+}
+
+.cfdi-tab-panel {
+    display: none;
+}
+
+.cfdi-tab-panel.active {
+    display: block;
+}
+
+.cfdi-step-grid {
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(5, 1fr);
+    margin-bottom: 1rem;
+}
+
+.cfdi-step {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.9rem;
+}
+
+.cfdi-step span {
+    align-items: center;
+    border-radius: 50%;
+    display: inline-flex;
+    font-weight: 900;
+    height: 28px;
+    justify-content: center;
+    margin-bottom: 0.55rem;
+    width: 28px;
+}
+
+.cfdi-step strong {
+    color: var(--blue-dark);
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.cfdi-step p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+.cfdi-step.active {
+    border-color: #72b7e5;
+}
+
+.cfdi-step.active span,
+.cfdi-status.active {
+    background: #e6f3fb;
+    color: #0369a1;
+}
+
+.cfdi-step.pending span,
+.cfdi-status.pending {
+    background: #eef3f8;
+    color: #475569;
+}
+
+.cfdi-step.processing span,
+.cfdi-status.processing {
+    background: #fff3d8;
+    color: #b45309;
+}
+
+.cfdi-step.done span,
+.cfdi-status.done,
+.cfdi-step.done {
+    background: #e6f4ef;
+    color: var(--green);
+}
+
+.cfdi-step.error {
+    border-color: #f2aaa4;
+}
+
+.cfdi-step.error span,
+.cfdi-status.error {
+    background: #fff1f0;
+    color: #b42318;
+}
+
+.cfdi-request-panel {
+    align-items: end;
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(4, 1fr) auto;
+    padding: 1rem;
+}
+
+.cfdi-request-panel label {
+    color: var(--blue-dark);
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 900;
+    margin-bottom: 0.35rem;
+}
+
+.cfdi-request-panel input {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font: inherit;
+    min-height: 42px;
+    padding: 0.6rem 0.75rem;
+    width: 100%;
+}
+
+.cfdi-status-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.cfdi-status {
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 900;
+    padding: 0.35rem 0.7rem;
+}
+
 .sat-help-grid {
     display: grid;
     gap: 0.9rem;
@@ -1765,6 +1932,8 @@ a {
 
     .fiscal-kpi-grid,
     .cfdi-filter-panel,
+    .cfdi-request-panel,
+    .cfdi-step-grid,
     .quick-actions-grid,
     .sat-help-grid,
     .sat-process-grid,
