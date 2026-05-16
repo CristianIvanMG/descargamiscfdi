@@ -7,6 +7,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DescargaController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\RfcController;
+use App\Http\Controllers\SatAuthenticationController;
 use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
@@ -30,20 +31,25 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
     Route::middleware(App\Http\Middleware\EnsureProfileIsComplete::class)->group(function (): void {
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
+        Route::post('/sat/autenticacion', [SatAuthenticationController::class, 'store'])
+            ->middleware('throttle:3,1')
+            ->name('sat.auth');
 
-        Route::prefix('descargas')->name('descargas.')->group(function (): void {
-            Route::get('/nueva', [DescargaController::class, 'create'])->name('create');
-            Route::post('/', [DescargaController::class, 'store'])->name('store');
-            Route::get('/{descargaJob}/estado', [DescargaController::class, 'show'])->name('show');
-        });
+        Route::middleware(App\Http\Middleware\EnsureSatIsAuthenticated::class)->group(function (): void {
+            Route::prefix('descargas')->name('descargas.')->group(function (): void {
+                Route::get('/nueva', [DescargaController::class, 'create'])->name('create');
+                Route::post('/', [DescargaController::class, 'store'])->name('store');
+                Route::get('/{descargaJob}/estado', [DescargaController::class, 'show'])->name('show');
+            });
 
-        Route::prefix('cfdi')->name('cfdi.')->group(function (): void {
-            Route::get('/', [CfdiController::class, 'index'])->name('index');
-            Route::get('/{cfdi}', [CfdiController::class, 'show'])->name('show');
-        });
+            Route::prefix('cfdi')->name('cfdi.')->group(function (): void {
+                Route::get('/', [CfdiController::class, 'index'])->name('index');
+                Route::get('/{cfdi}', [CfdiController::class, 'show'])->name('show');
+            });
 
-        Route::middleware(App\Http\Middleware\EnsureMembershipAllowsAction::class)->group(function (): void {
-            Route::resource('rfcs', RfcController::class)->only(['index', 'store', 'destroy']);
+            Route::middleware(App\Http\Middleware\EnsureMembershipAllowsAction::class)->group(function (): void {
+                Route::resource('rfcs', RfcController::class)->only(['index', 'store', 'destroy']);
+            });
         });
 
         Route::get('/suscripcion/planes', [SuscripcionController::class, 'plans'])->name('suscripcion.planes');

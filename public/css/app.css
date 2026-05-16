@@ -1219,6 +1219,36 @@ a {
     color: var(--green);
 }
 
+.cfdi-kpi-grid {
+    margin: 0 0 1rem;
+}
+
+.cfdi-filter-panel {
+    align-items: end;
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    margin-bottom: 1rem;
+}
+
+.cfdi-filter-panel label {
+    color: var(--blue-dark);
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 900;
+    margin-bottom: 0.35rem;
+}
+
+.cfdi-filter-panel input,
+.cfdi-filter-panel select {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font: inherit;
+    min-height: 42px;
+    padding: 0.6rem 0.75rem;
+    width: 100%;
+}
+
 .sat-help-grid {
     display: grid;
     gap: 0.9rem;
@@ -1734,6 +1764,7 @@ a {
     }
 
     .fiscal-kpi-grid,
+    .cfdi-filter-panel,
     .quick-actions-grid,
     .sat-help-grid,
     .sat-process-grid,

@@ -28,7 +28,7 @@
             <header class="workspace-topbar">
                 <div>
                     <h1>Inicio</h1>
-                    <p>Resumen fiscal del mes actual</p>
+                    <p>Estado del sistema y conexión SAT</p>
                 </div>
                 <div class="workspace-actions">
                     <div class="workspace-user">
@@ -45,104 +45,16 @@
                 <section class="orientation-box">
                     <div>
                         <strong>{{ session('status') }}</strong>
-                        <p>Ya puedes iniciar tus procesos de descarga y análisis CFDI.</p>
+                        <p>La operación CFDI se habilita después de validar tu conexión con el SAT.</p>
                     </div>
                 </section>
             @endif
 
             <section class="orientation-box">
                 <div>
-                    <strong>Resumen general</strong>
+                    <strong>Estado de cuenta</strong>
                     <p>RFC activo: <b>{{ $profile?->rfc ?? 'Pendiente' }}</b> · Periodo: <b>{{ ucfirst($periodLabel) }}</b> · Tipo: <b>{{ $profile?->user_type ?? 'Pendiente' }}</b></p>
                 </div>
-                <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">Descargar CFDI</a>
-            </section>
-
-            <section class="fiscal-kpi-grid" aria-label="Indicadores fiscales">
-                @foreach ([
-                    ['label' => 'CFDI emitidos', 'value' => number_format($metrics['emitidos_count']), 'note' => 'Total de comprobantes del periodo'],
-                    ['label' => 'Monto emitido acumulado', 'value' => '$'.number_format($metrics['emitidos_total'], 2), 'note' => 'Ingresos detectados por CFDI'],
-                    ['label' => 'IVA trasladado', 'value' => '$'.number_format($metrics['iva_trasladado'], 2), 'note' => 'Base para declaración'],
-                    ['label' => 'CFDI recibidos', 'value' => number_format($metrics['recibidos_count']), 'note' => 'Comprobantes recibidos del periodo'],
-                    ['label' => 'Gastos detectados', 'value' => '$'.number_format($metrics['recibidos_total'], 2), 'note' => 'Egresos deducibles por revisar'],
-                    ['label' => 'IVA acreditable', 'value' => '$'.number_format($metrics['iva_acreditable'], 2), 'note' => 'Base para revisión fiscal'],
-                ] as $metric)
-                    <article class="fiscal-kpi">
-                        <span>{{ $metric['label'] }}</span>
-                        <strong>{{ $metric['value'] }}</strong>
-                        <small>{{ $metric['note'] }}</small>
-                    </article>
-                @endforeach
-            </section>
-
-            <section class="workspace-panel future-section" hidden>
-                <div class="panel-header">
-                    <div>
-                        <h2>Acciones rápidas</h2>
-                        <p>Inicia las tareas frecuentes sin buscar entre módulos.</p>
-                    </div>
-                </div>
-                <div class="quick-actions-grid">
-                    <a href="{{ url('/descargas/nueva') }}">
-                        <strong>Descargar CFDI</strong>
-                        <span>{{ $canUseMultipleRfcs ? 'Usa tu RFC o clientes registrados.' : 'Modo gratuito: RFC de tu perfil.' }}</span>
-                    </a>
-                    <a href="{{ url('/dashboard') }}">
-                        <strong>Cambiar periodo</strong>
-                        <span>Próximamente: filtros por mes y ejercicio fiscal.</span>
-                    </a>
-                    <a href="{{ url('/cfdi') }}">
-                        <strong>Ir a reportes</strong>
-                        <span>Revisa emitidos, recibidos, montos e IVA.</span>
-                    </a>
-                </div>
-            </section>
-
-            <section class="dashboard-sat-intro" aria-labelledby="satDownloadTitle">
-                <div class="dashboard-sat-header">
-                    <h2 id="satDownloadTitle">Descarga Masiva de XMLs del SAT</h2>
-                    <p>Utiliza tu e.firma (FIEL) para descargar tus comprobantes fiscales directamente del SAT.</p>
-                </div>
-
-                <div class="sat-process-grid">
-                    <article>
-                        <span>🛡</span>
-                        <div>
-                            <strong>1. Autenticación</strong>
-                            <p>Carga tu certificado (.cer) y llave privada (.key) con tu contraseña para autenticarte con el SAT.</p>
-                        </div>
-                    </article>
-                    <article>
-                        <span>▤</span>
-                        <div>
-                            <strong>2. Solicitud</strong>
-                            <p>Selecciona el rango de fechas y el tipo de comprobantes que deseas descargar.</p>
-                        </div>
-                    </article>
-                    <article>
-                        <span>⇩</span>
-                        <div>
-                            <strong>3. Descarga</strong>
-                            <p>Espera a que el SAT procese tu solicitud y descarga los paquetes ZIP con tus XMLs.</p>
-                        </div>
-                    </article>
-                </div>
-
-                <div class="sat-requirements">
-                    <div class="sat-warning-icon">!</div>
-                    <div>
-                        <strong>Límites y requisitos del SAT</strong>
-                        <ul>
-                            <li><span>✓</span><b>Rango de fechas:</b> máximo 1 mes por solicitud SAT.</li>
-                            <li><span>✓</span><b>Antigüedad:</b> hasta 6 años de historial disponible.</li>
-                            <li><span>✓</span><b>Tiempo de procesamiento:</b> de minutos a horas según volumen.</li>
-                            <li><span>✓</span><b>Token de sesión:</b> válido por 5 minutos y se renueva durante el flujo.</li>
-                            <li><span>✓</span><b>Solicitudes simultáneas:</b> máximo 2 solicitudes en proceso a la vez.</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <a class="sat-start-link" href="#efirma-panel">→ Inicia sesión con tu e.firma para comenzar</a>
             </section>
 
             <section id="efirma-panel" class="efirma-panel" aria-labelledby="efirmaTitle">
@@ -162,12 +74,13 @@
                     </div>
                 </div>
 
-                <div class="sat-connection-status is-disconnected" data-sat-status>
-                    <strong data-sat-status-title>Conexión con el SAT no establecida</strong>
-                    <p data-sat-status-copy>Carga tu certificado, llave privada y contraseña para validar la e.firma antes de intercambiar información con el SAT.</p>
+                <div class="sat-connection-status {{ session('sat_authenticated') ? 'is-connected' : 'is-disconnected' }}" data-sat-status>
+                    <strong data-sat-status-title>{{ session('sat_authenticated') ? 'Conexión con el SAT validada correctamente' : 'Conexión con el SAT no establecida' }}</strong>
+                    <p data-sat-status-copy>{{ session('sat_authenticated') ? 'La e.firma fue validada contra el SAT. Ya puedes trabajar la información CFDI desde la sección CFDI.' : 'Carga tu certificado, llave privada y contraseña para validar la e.firma antes de intercambiar información con el SAT.' }}</p>
                 </div>
 
-                <div class="efirma-form-grid">
+                <form class="efirma-form-grid" method="post" action="{{ route('sat.auth') }}" enctype="multipart/form-data" data-sat-auth-form>
+                    @csrf
                     <div class="efirma-field full">
                         <label for="dashboard_cer">Certificado (.cer)</label>
                         <label class="file-drop" for="dashboard_cer">
@@ -175,7 +88,7 @@
                             <strong>Selecciona tu archivo .cer</strong>
                             <small>Haz clic para buscar el archivo</small>
                         </label>
-                        <input id="dashboard_cer" type="file" accept=".cer">
+                        <input id="dashboard_cer" name="cer" type="file" accept=".cer" required>
                     </div>
 
                     <div class="efirma-field full">
@@ -185,119 +98,26 @@
                             <strong>Selecciona tu archivo .key</strong>
                             <small>Haz clic para buscar el archivo</small>
                         </label>
-                        <input id="dashboard_key" type="file" accept=".key">
+                        <input id="dashboard_key" name="key" type="file" accept=".key" required>
                     </div>
 
                     <div class="efirma-field full">
                         <label for="dashboard_efirma_password">Contraseña de la llave privada</label>
-                        <input id="dashboard_efirma_password" type="password" placeholder="Ingresa tu contraseña" autocomplete="off">
+                        <input id="dashboard_efirma_password" name="password" type="password" placeholder="Ingresa tu contraseña" autocomplete="off" required>
                     </div>
 
                     <button class="btn btn-outline-primary" type="button" data-efirma-clear>Limpiar</button>
-                    <button class="btn btn-primary" type="button" data-efirma-connect>Conectar e.firma</button>
-                </div>
+                    <button class="btn btn-primary" type="button" data-efirma-connect @disabled(session('sat_authenticated'))>{{ session('sat_authenticated') ? 'Conexión establecida' : 'Conectar e.firma' }}</button>
+                </form>
             </section>
 
-            <section class="dashboard-help-section" aria-labelledby="helpTitle">
-                <div class="dashboard-help-heading">
-                    <h2 id="helpTitle">Información y Ayuda</h2>
-                    <p>Todo lo que necesitas saber sobre la descarga masiva de CFDI.</p>
-                </div>
-
-                <div class="help-grid">
-                    <article class="help-card">
-                        <h3>▥ ¿Cómo usar la herramienta?</h3>
-                        @foreach ([
-                            ['Conecta tu e.firma', 'Carga tu certificado (.cer), llave privada (.key) e ingresa tu contraseña. Tu e.firma se valida localmente y se usa solo para firmar solicitudes al SAT.'],
-                            ['Crea una solicitud', 'Selecciona el rango de fechas, tipo de comprobantes emitidos o recibidos y formato de descarga.'],
-                            ['Espera el procesamiento', 'El SAT procesa tu solicitud. Puedes volver después; el tiempo varía según el volumen de comprobantes.'],
-                            ['Verifica el estado', 'Consulta periódicamente si la solicitud ya está lista. El estado cambiará cuando los paquetes estén disponibles.'],
-                            ['Descarga tus archivos', 'Cuando la solicitud esté lista, descarga los paquetes ZIP para conservar tus XML.'],
-                        ] as $index => $step)
-                            <div class="help-step">
-                                <span>{{ $index + 1 }}</span>
-                                <div>
-                                    <strong>{{ $step[0] }}</strong>
-                                    <p>{{ $step[1] }}</p>
-                                </div>
-                            </div>
-                        @endforeach
-                    </article>
-
-                    <article class="help-card">
-                        <h3>⚠ Consideraciones importantes</h3>
-                        @foreach ([
-                            ['Límite de tiempo del token', 'Tu sesión SAT tiene un token válido por 5 minutos. Se renueva automáticamente mientras usas la herramienta.'],
-                            ['Máximo 1 mes por solicitud', 'El SAT solo permite solicitar comprobantes dentro de un rango de 1 mes. Para periodos más largos, crea solicitudes separadas.'],
-                            ['Solicitudes simultáneas', 'El SAT permite máximo 2 solicitudes en proceso al mismo tiempo por RFC.'],
-                            ['Expiración de paquetes', 'Los paquetes listos para descarga tienen vigencia limitada. Descárgalos antes de que expiren.'],
-                        ] as $item)
-                            <div class="help-item">
-                                <span>!</span>
-                                <div>
-                                    <strong>{{ $item[0] }}</strong>
-                                    <p>{{ $item[1] }}</p>
-                                </div>
-                            </div>
-                        @endforeach
-                    </article>
-                </div>
-            </section>
-
-            <section class="legal-panel" aria-labelledby="legalTitle">
-                <h2 id="legalTitle">⚖ Avisos legales</h2>
-                @foreach ([
-                    ['Servicio oficial del SAT:', 'Esta herramienta utiliza los servicios web oficiales del Servicio de Administración Tributaria (SAT) de México para la descarga masiva de comprobantes fiscales digitales.'],
-                    ['Seguridad de tu e.firma:', 'Tu e.firma (FIEL) se procesa de forma segura. Los archivos .cer y .key se utilizan únicamente para firmar las solicitudes al SAT.'],
-                    ['Responsabilidad del usuario:', 'El usuario es responsable del uso correcto de su e.firma y de la confidencialidad de sus credenciales. No compartas tu llave privada ni tu contraseña con terceros.'],
-                    ['Datos fiscales:', 'Los comprobantes descargados son documentos oficiales emitidos o recibidos por el contribuyente. La información contenida en ellos es confidencial y debe manejarse conforme a las leyes aplicables.'],
-                    ['Disponibilidad del servicio:', 'La disponibilidad del servicio de descarga masiva depende del SAT. En ocasiones puede existir lentitud o interrupciones temporales por mantenimiento o alta demanda.'],
-                ] as $notice)
-                    <p><span>ⓘ</span><b>{{ $notice[0] }}</b> {{ $notice[1] }}</p>
-                @endforeach
-            </section>
-
-            <section class="workspace-panel future-section" hidden>
-                <div class="panel-header">
-                    <h2>Actividad reciente de CFDI</h2>
-                    <a href="{{ url('/cfdi') }}">Ver todos</a>
-                </div>
-                <div class="table-responsive">
-                    <table class="fiscal-table">
-                        <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Tipo</th>
-                            <th>RFC</th>
-                            <th>Concepto</th>
-                            <th class="text-end">Total</th>
-                            <th>Estatus</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @foreach ([
-                            ['fecha' => 'Pendiente', 'tipo' => 'Emitido', 'rfc' => 'Sin RFC', 'concepto' => 'Descarga inicial pendiente', 'total' => '$0.00', 'estatus' => 'Sin datos'],
-                            ['fecha' => 'Pendiente', 'tipo' => 'Recibido', 'rfc' => 'Sin RFC', 'concepto' => 'Agrega un cliente para iniciar', 'total' => '$0.00', 'estatus' => 'Sin datos'],
-                        ] as $row)
-                            <tr>
-                                <td>{{ $row['fecha'] }}</td>
-                                <td>{{ $row['tipo'] }}</td>
-                                <td>{{ $row['rfc'] }}</td>
-                                <td>{{ $row['concepto'] }}</td>
-                                <td class="text-end">{{ $row['total'] }}</td>
-                                <td><span class="status-pill">{{ $row['estatus'] }}</span></td>
-                            </tr>
-                        @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </section>
         </main>
     </div>
 
     <script>
         (() => {
             const status = document.querySelector('[data-sat-status]');
+            const form = document.querySelector('[data-sat-auth-form]');
             const statusTitle = document.querySelector('[data-sat-status-title]');
             const statusCopy = document.querySelector('[data-sat-status-copy]');
             const connect = document.querySelector('[data-efirma-connect]');
@@ -317,9 +137,12 @@
                     connect.textContent = 'Conectar e.firma';
                     connect.disabled = false;
                 }
+                fields.forEach((field) => {
+                    if (field) field.disabled = false;
+                });
             };
 
-            connect?.addEventListener('click', () => {
+            connect?.addEventListener('click', async () => {
                 const ready = fields.every((field) => field && field.value);
 
                 if (!ready) {
@@ -329,12 +152,38 @@
                     return;
                 }
 
-                status?.classList.remove('is-disconnected');
-                status?.classList.add('is-connected');
-                if (statusTitle) statusTitle.textContent = 'Conexión con el SAT validada correctamente';
-                if (statusCopy) statusCopy.textContent = 'La e.firma fue validada en esta sesión. Ya puedes iniciar solicitudes de descarga CFDI.';
-                connect.textContent = 'Conexión establecida';
                 connect.disabled = true;
+                connect.textContent = 'Validando con SAT...';
+
+                try {
+                    const response = await fetch(form.action, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                        body: new FormData(form),
+                    });
+                    const payload = await response.json();
+
+                    if (!response.ok || !payload.ok) {
+                        throw new Error(payload.message || 'No fue posible validar la e.firma. Verifica tus archivos y contraseña.');
+                    }
+
+                    status?.classList.remove('is-disconnected');
+                    status?.classList.add('is-connected');
+                    if (statusTitle) statusTitle.textContent = 'Conexión con el SAT validada correctamente';
+                    if (statusCopy) statusCopy.textContent = 'La e.firma fue validada contra el SAT. Ya puedes trabajar la información CFDI desde la sección CFDI.';
+                    connect.textContent = 'Conexión establecida';
+                    fields.forEach((field) => {
+                        if (field) field.disabled = true;
+                    });
+                } catch (error) {
+                    setDisconnected();
+                    if (statusCopy) statusCopy.textContent = 'No fue posible validar la e.firma. Verifica tus archivos y contraseña.';
+                    status?.classList.add('status-attention');
+                    window.setTimeout(() => status?.classList.remove('status-attention'), 500);
+                }
             });
 
             clear?.addEventListener('click', () => {
