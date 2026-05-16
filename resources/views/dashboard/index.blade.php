@@ -28,7 +28,7 @@
             <header class="workspace-topbar">
                 <div>
                     <h1>Inicio</h1>
-                    <p>Estado del sistema y conexión SAT</p>
+                    <p>Resumen fiscal del mes actual</p>
                 </div>
                 <div class="workspace-actions">
                     <div class="workspace-user">
@@ -109,6 +109,66 @@
                     <button class="btn btn-outline-primary" type="button" data-efirma-clear>Limpiar</button>
                     <button class="btn btn-primary" type="button" data-efirma-connect @disabled(session('sat_authenticated'))>{{ session('sat_authenticated') ? 'Conexión establecida' : 'Conectar e.firma' }}</button>
                 </form>
+            </section>
+
+            <section class="dashboard-help-section" aria-labelledby="helpTitle">
+                <div class="dashboard-help-heading">
+                    <h2 id="helpTitle">Información y Ayuda</h2>
+                    <p>Todo lo que necesitas saber sobre la descarga masiva de CFDI.</p>
+                </div>
+
+                <div class="help-grid">
+                    <article class="help-card">
+                        <h3>▥ ¿Cómo usar la herramienta?</h3>
+                        @foreach ([
+                            ['Conecta tu e.firma', 'Carga tu certificado (.cer), llave privada (.key) e ingresa tu contraseña para autenticarte con el SAT.'],
+                            ['Crea una solicitud', 'Selecciona el rango de fechas, tipo de comprobantes emitidos o recibidos y formato de descarga.'],
+                            ['Espera el procesamiento', 'El SAT procesa tu solicitud. El tiempo varía según el volumen de comprobantes.'],
+                            ['Verifica el estado', 'Consulta periódicamente si la solicitud ya está lista para descarga.'],
+                            ['Descarga tus archivos', 'Cuando la solicitud esté lista, descarga los paquetes ZIP con tus XML.'],
+                        ] as $index => $step)
+                            <div class="help-step">
+                                <span>{{ $index + 1 }}</span>
+                                <div>
+                                    <strong>{{ $step[0] }}</strong>
+                                    <p>{{ $step[1] }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </article>
+
+                    <article class="help-card">
+                        <h3>⚠ Límites y requisitos del SAT</h3>
+                        @foreach ([
+                            ['Rango de fechas', 'Máximo 1 mes por solicitud.'],
+                            ['Antigüedad', 'Hasta 6 años de historial disponible.'],
+                            ['Tiempo de procesamiento', 'De minutos a horas según volumen.'],
+                            ['Token de sesión', 'Válido por 5 minutos; se renueva automáticamente.'],
+                            ['Solicitudes simultáneas', 'Máximo 2 solicitudes en proceso a la vez.'],
+                        ] as $item)
+                            <div class="help-item">
+                                <span>!</span>
+                                <div>
+                                    <strong>{{ $item[0] }}</strong>
+                                    <p>{{ $item[1] }}</p>
+                                </div>
+                            </div>
+                        @endforeach
+                    </article>
+                </div>
+            </section>
+
+            <section class="legal-panel" aria-labelledby="legalTitle">
+                <h2 id="legalTitle">⚖ Avisos legales</h2>
+                @foreach ([
+                    ['Servicio oficial del SAT:', 'Esta herramienta utiliza los servicios web oficiales del Servicio de Administración Tributaria (SAT) de México para la descarga masiva de comprobantes fiscales digitales.'],
+                    ['Seguridad de tu e.firma:', 'Tu e.firma (FIEL) se procesa de forma segura. Los archivos .cer y .key se utilizan únicamente para firmar las solicitudes al SAT y no se almacenan en nuestros servidores. La contraseña nunca sale de tu navegador.'],
+                    ['Responsabilidad del usuario:', 'El usuario es responsable del uso correcto de su e.firma y de la confidencialidad de sus credenciales. No compartas tu llave privada ni tu contraseña con terceros.'],
+                    ['Datos fiscales:', 'Los comprobantes descargados son documentos oficiales emitidos o recibidos por el contribuyente. La información contenida en ellos es confidencial y debe manejarse conforme a las leyes aplicables.'],
+                    ['Disponibilidad del servicio:', 'La disponibilidad del servicio de descarga masiva depende del SAT. En ocasiones puede experimentar lentitud o interrupciones temporales debido a mantenimiento o alta demanda.'],
+                ] as $notice)
+                    <p><span>ⓘ</span><b>{{ $notice[0] }}</b> {{ $notice[1] }}</p>
+                @endforeach
             </section>
 
         </main>
