@@ -747,6 +747,10 @@ a {
     outline: none;
 }
 
+[data-name-mask] {
+    text-transform: uppercase;
+}
+
 .rfc-input {
     text-transform: uppercase;
 }
@@ -816,6 +820,8 @@ a {
     background: var(--blue-dark);
     border-right: 1px solid rgba(255, 255, 255, 0.08);
     color: var(--white);
+    display: flex;
+    flex-direction: column;
     padding: 1.25rem 0.9rem;
 }
 
@@ -873,6 +879,50 @@ a {
     color: #a8f0d2;
     font-weight: 900;
     width: 1.2rem;
+}
+
+.sidebar-locked {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #d8e5ef;
+    padding: 1rem;
+}
+
+.sidebar-locked strong {
+    color: var(--white);
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.sidebar-locked p {
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.sidebar-logout {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.sidebar-logout button {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    color: #d8e5ef;
+    display: flex;
+    font-weight: 800;
+    gap: 0.65rem;
+    min-height: 42px;
+    padding: 0.7rem 0.8rem;
+    width: 100%;
+}
+
+.sidebar-logout button:hover,
+.sidebar-logout button:focus {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--white);
 }
 
 .workspace-main {

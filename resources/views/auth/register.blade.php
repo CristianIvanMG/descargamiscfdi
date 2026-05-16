@@ -20,7 +20,7 @@
                 <form class="auth-card" action="{{ url('/registro') }}" method="post" aria-label="Registro ContaPro">
                     @csrf
                     <label for="name">Nombre completo</label>
-                    <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" required>
+                    <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" required data-name-mask>
 
                     <label for="email">Correo electrónico</label>
                     <div class="validated-input-wrap">

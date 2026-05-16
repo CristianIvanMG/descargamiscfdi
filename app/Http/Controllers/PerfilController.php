@@ -12,14 +12,49 @@ use Illuminate\Validation\Rule;
 
 class PerfilController
 {
+    public const ESTADOS_MEXICO = [
+        'Aguascalientes',
+        'Baja California',
+        'Baja California Sur',
+        'Campeche',
+        'Chiapas',
+        'Chihuahua',
+        'Ciudad de México',
+        'Coahuila',
+        'Colima',
+        'Durango',
+        'Estado de México',
+        'Guanajuato',
+        'Guerrero',
+        'Hidalgo',
+        'Jalisco',
+        'Michoacán',
+        'Morelos',
+        'Nayarit',
+        'Nuevo León',
+        'Oaxaca',
+        'Puebla',
+        'Querétaro',
+        'Quintana Roo',
+        'San Luis Potosí',
+        'Sinaloa',
+        'Sonora',
+        'Tabasco',
+        'Tamaulipas',
+        'Tlaxcala',
+        'Veracruz',
+        'Yucatán',
+        'Zacatecas',
+    ];
+
     public function edit(Request $request): View
     {
         if (! Schema::hasTable('user_profiles')) {
             return view('perfil.index', [
                 'profile' => new UserProfile([
                     'primary_email' => $request->user()->email,
-                    'country' => 'México',
                 ]),
+                'estados' => self::ESTADOS_MEXICO,
                 'profileStorageUnavailable' => true,
             ]);
         }
@@ -28,11 +63,11 @@ class PerfilController
             'user_id' => $request->user()->id,
         ], [
             'primary_email' => $request->user()->email,
-            'country' => 'México',
         ]);
 
         return view('perfil.index', [
             'profile' => $profile,
+            'estados' => self::ESTADOS_MEXICO,
             'profileStorageUnavailable' => false,
         ]);
     }
@@ -40,16 +75,20 @@ class PerfilController
     public function update(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'business_name' => ['required', 'string', 'max:160'],
-            'rfc' => ['nullable', 'string', 'min:12', 'max:13', new RfcValido()],
-            'user_type' => ['required', Rule::in(['Contador independiente', 'Despacho contable'])],
+            'business_name' => ['required', 'string', 'max:160', 'regex:/^[\pL\s]+$/u'],
+            'rfc' => ['required', 'string', 'min:12', 'max:13', new RfcValido()],
+            'user_type' => ['required', Rule::in(['Contador independiente', 'Persona física', 'Despacho contable'])],
             'primary_email' => ['required', 'email:rfc,dns', 'max:160'],
-            'country' => ['required', Rule::in(['México'])],
+            'country' => ['required', Rule::in(self::ESTADOS_MEXICO)],
         ]);
+
+        $validated['business_name'] = mb_strtoupper($validated['business_name'], 'UTF-8');
 
         if (! Schema::hasTable('user_profiles')) {
             return redirect('/dashboard')->with('status', 'Perfil recibido. Falta activar almacenamiento de perfil en base de datos.');
         }
+
+        $wasComplete = $request->user()->profile?->isComplete() ?? false;
 
         $request->user()->profile()->updateOrCreate([
             'user_id' => $request->user()->id,
@@ -58,6 +97,8 @@ class PerfilController
             'completed_at' => now(),
         ]);
 
-        return redirect('/dashboard');
+        return $wasComplete
+            ? back()->with('status', 'Perfil actualizado.')
+            : redirect('/dashboard');
     }
 }

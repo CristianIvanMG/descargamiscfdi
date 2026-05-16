@@ -30,13 +30,13 @@ class RegistroController
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:120'],
+            'name' => ['required', 'string', 'max:120', 'regex:/^[\pL\s]+$/u'],
             'email' => ['required', 'email:rfc,dns', 'max:160', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
         ]);
 
         $user = User::query()->create([
-            'name' => $validated['name'],
+            'name' => mb_strtoupper($validated['name'], 'UTF-8'),
             'email' => mb_strtolower($validated['email']),
             'password' => Hash::make($validated['password']),
         ]);
@@ -44,7 +44,6 @@ class RegistroController
         if (Schema::hasTable('user_profiles')) {
             $user->profile()->create([
                 'primary_email' => $user->email,
-                'country' => 'México',
             ]);
         }
 

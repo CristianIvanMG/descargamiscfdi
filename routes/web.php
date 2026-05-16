@@ -27,23 +27,29 @@ Route::view('/recuperar', 'auth.forgot-password')->name('password.request');
 Route::middleware(['auth', 'verified'])->group(function (): void {
     Route::get('/perfil', [PerfilController::class, 'edit'])->name('profile');
     Route::post('/perfil', [PerfilController::class, 'update'])->name('profile.update');
-    Route::get('/dashboard', DashboardController::class)->middleware(App\Http\Middleware\EnsureProfileIsComplete::class)->name('dashboard');
 
-    Route::prefix('descargas')->name('descargas.')->group(function (): void {
-        Route::get('/nueva', [DescargaController::class, 'create'])->name('create');
-        Route::post('/', [DescargaController::class, 'store'])->name('store');
-        Route::get('/{descargaJob}/estado', [DescargaController::class, 'show'])->name('show');
+    Route::middleware(App\Http\Middleware\EnsureProfileIsComplete::class)->group(function (): void {
+        Route::get('/dashboard', DashboardController::class)->name('dashboard');
+
+        Route::middleware(App\Http\Middleware\EnsureMembershipAllowsAction::class)->group(function (): void {
+            Route::prefix('descargas')->name('descargas.')->group(function (): void {
+                Route::get('/nueva', [DescargaController::class, 'create'])->name('create');
+                Route::post('/', [DescargaController::class, 'store'])->name('store');
+                Route::get('/{descargaJob}/estado', [DescargaController::class, 'show'])->name('show');
+            });
+
+            Route::prefix('cfdi')->name('cfdi.')->group(function (): void {
+                Route::get('/', [CfdiController::class, 'index'])->name('index');
+                Route::get('/{cfdi}', [CfdiController::class, 'show'])->name('show');
+            });
+
+            Route::resource('rfcs', RfcController::class)->only(['index', 'store', 'destroy']);
+        });
+
+        Route::get('/suscripcion/planes', [SuscripcionController::class, 'plans'])->name('suscripcion.planes');
+        Route::post('/suscripcion/checkout', [SuscripcionController::class, 'checkout'])->name('suscripcion.checkout');
+        Route::view('/suscripcion/upgrade', 'suscripcion.upgrade')->name('suscripcion.upgrade');
     });
-
-    Route::prefix('cfdi')->name('cfdi.')->group(function (): void {
-        Route::get('/', [CfdiController::class, 'index'])->name('index');
-        Route::get('/{cfdi}', [CfdiController::class, 'show'])->name('show');
-    });
-
-    Route::resource('rfcs', RfcController::class)->only(['index', 'store', 'destroy']);
-
-    Route::get('/suscripcion/planes', [SuscripcionController::class, 'plans'])->name('suscripcion.planes');
-    Route::post('/suscripcion/checkout', [SuscripcionController::class, 'checkout'])->name('suscripcion.checkout');
 });
 
 Route::post('/webhooks/conekta', [WebhookController::class, 'conekta'])->name('webhooks.conekta');

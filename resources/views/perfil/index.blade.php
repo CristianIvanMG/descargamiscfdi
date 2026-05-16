@@ -4,28 +4,45 @@
 ])
 
 @section('content')
+    @php
+        $isComplete = $profile->isComplete();
+    @endphp
+
     <div class="app-workspace">
         <aside class="app-sidebar" aria-label="Menú fiscal">
-            <a class="workspace-brand" href="{{ url('/dashboard') }}">
+            <a class="workspace-brand" href="{{ $isComplete ? url('/dashboard') : url('/perfil') }}">
                 <span>CP</span>
                 <strong>ContaPro</strong>
             </a>
-            <nav>
-                <a href="{{ url('/dashboard') }}"><span>▦</span>Dashboard</a>
-                <a href="{{ url('/cfdi?tipo=emitidos') }}"><span>▤</span>CFDI Emitidos</a>
-                <a href="{{ url('/cfdi?tipo=recibidos') }}"><span>▥</span>CFDI Recibidos</a>
-                <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
-                <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
-                <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
-                <a class="active" href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
-            </nav>
+
+            @if ($isComplete)
+                <nav>
+                    <a href="{{ url('/dashboard') }}"><span>▦</span>Dashboard</a>
+                    <a href="{{ url('/cfdi?tipo=emitidos') }}"><span>▤</span>CFDI Emitidos</a>
+                    <a href="{{ url('/cfdi?tipo=recibidos') }}"><span>▥</span>CFDI Recibidos</a>
+                    <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
+                    <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
+                    <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
+                    <a class="active" href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
+                </nav>
+            @else
+                <div class="sidebar-locked">
+                    <strong>Configuración requerida</strong>
+                    <p>Completa tu perfil para habilitar el dashboard y las herramientas CFDI.</p>
+                </div>
+            @endif
+
+            <form class="sidebar-logout" action="{{ url('/logout') }}" method="post">
+                @csrf
+                <button type="submit"><span>↩</span>Cerrar sesión</button>
+            </form>
         </aside>
 
         <main class="workspace-main">
             <header class="workspace-topbar">
                 <div>
                     <h1>Perfil de negocio</h1>
-                    <p>Configura tu entorno de trabajo para empezar con CFDI.</p>
+                    <p>Completa tu entorno de trabajo para empezar con CFDI.</p>
                 </div>
             </header>
 
@@ -33,7 +50,7 @@
                 <div class="panel-header">
                     <div>
                         <h2>Completa tu perfil para empezar a trabajar con CFDI.</h2>
-                        <p>Estos datos ayudan a personalizar el flujo de descargas, reportes y declaraciones.</p>
+                        <p>Todos los campos son obligatorios. Esta configuración protege el flujo fiscal y evita datos incompletos.</p>
                     </div>
                 </div>
 
@@ -49,17 +66,19 @@
                     @csrf
                     <div>
                         <label for="business_name">Nombre del contador o despacho</label>
-                        <input id="business_name" name="business_name" type="text" value="{{ old('business_name', $profile->business_name) }}" placeholder="Ej. Despacho Hernández y Asociados" required>
+                        <input id="business_name" name="business_name" type="text" value="{{ old('business_name', $profile->business_name) }}" placeholder="Ej. DESPACHO HERNÁNDEZ Y ASOCIADOS" required data-name-mask>
                     </div>
                     <div>
                         <label for="rfc">RFC</label>
-                        <input id="rfc" name="rfc" type="text" value="{{ old('rfc', $profile->rfc) }}" maxlength="13" placeholder="Opcional al inicio" data-rfc-mask aria-describedby="rfcFeedback">
-                        <small id="rfcFeedback" class="rfc-feedback" data-rfc-feedback="rfc">Opcional al inicio. Formato: 12 o 13 caracteres.</small>
+                        <input id="rfc" name="rfc" type="text" value="{{ old('rfc', $profile->rfc) }}" maxlength="13" placeholder="RFC CON HOMOCLAVE" required data-rfc-mask aria-describedby="rfcFeedback">
+                        <small id="rfcFeedback" class="rfc-feedback" data-rfc-feedback="rfc">Formato: 12 o 13 caracteres con homoclave.</small>
                     </div>
                     <div>
                         <label for="type">Tipo de usuario</label>
                         <select id="type" name="user_type" required>
+                            <option value="">Selecciona una opción</option>
                             <option @selected(old('user_type', $profile->user_type) === 'Contador independiente')>Contador independiente</option>
+                            <option @selected(old('user_type', $profile->user_type) === 'Persona física')>Persona física</option>
                             <option @selected(old('user_type', $profile->user_type) === 'Despacho contable')>Despacho contable</option>
                         </select>
                     </div>
@@ -72,13 +91,16 @@
                         <small id="profileEmailFeedback" class="input-feedback" data-email-feedback="primary_email"></small>
                     </div>
                     <div>
-                        <label for="country">Zona fiscal / país</label>
+                        <label for="country">Zona fiscal / Estado</label>
                         <select id="country" name="country" required>
-                            <option @selected(old('country', $profile->country) === 'México')>México</option>
+                            <option value="">Selecciona un estado</option>
+                            @foreach ($estados as $estado)
+                                <option @selected(old('country', $profile->country) === $estado)>{{ $estado }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="profile-actions">
-                        <button class="btn btn-primary" type="submit">Guardar y entrar al dashboard</button>
+                        <button class="btn btn-primary" type="submit">{{ $isComplete ? 'Guardar' : 'Guardar y entrar al dashboard' }}</button>
                     </div>
                 </form>
             </section>

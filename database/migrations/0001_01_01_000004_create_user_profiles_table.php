@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('rfc', 13)->nullable();
             $table->string('user_type')->nullable();
             $table->string('primary_email')->nullable();
-            $table->string('country')->default('México');
+            $table->string('country', 60)->nullable();
             $table->timestamp('completed_at')->nullable();
             $table->timestamps();
         });

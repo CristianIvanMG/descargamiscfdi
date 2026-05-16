@@ -19,6 +19,10 @@
                 <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
                 <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
             </nav>
+            <form class="sidebar-logout" action="{{ url('/logout') }}" method="post">
+                @csrf
+                <button type="submit"><span>↩</span>Cerrar sesión</button>
+            </form>
         </aside>
 
         <main class="workspace-main">
@@ -35,12 +39,17 @@
                             <small>{{ auth()->user()?->email ?? 'Cuenta verificada' }}</small>
                         </div>
                     </div>
-                    <form action="{{ url('/logout') }}" method="post">
-                        @csrf
-                        <button class="workspace-logout" type="submit">Salir</button>
-                    </form>
                 </div>
             </header>
+
+            @if (session('status'))
+                <section class="orientation-box">
+                    <div>
+                        <strong>{{ session('status') }}</strong>
+                        <p>Ya puedes iniciar tus procesos de descarga y análisis CFDI.</p>
+                    </div>
+                </section>
+            @endif
 
             <section class="orientation-box">
                 <div>
