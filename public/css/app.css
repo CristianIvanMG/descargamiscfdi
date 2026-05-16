@@ -772,6 +772,73 @@ a {
     margin-top: 0.35rem;
 }
 
+.state-combobox {
+    position: relative;
+}
+
+.state-native-select {
+    height: 1px;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 1px;
+}
+
+.state-combobox-input {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--blue-dark);
+    font: inherit;
+    min-height: 46px;
+    padding: 0.7rem 0.8rem;
+    width: 100%;
+}
+
+.state-combobox-input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 0.2rem rgba(0, 99, 65, 0.12);
+    outline: none;
+}
+
+.state-combobox-list {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    display: grid;
+    left: 0;
+    max-height: 240px;
+    overflow-y: auto;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 6px);
+    z-index: 20;
+}
+
+.state-combobox-list:empty {
+    display: none;
+}
+
+.state-combobox-list button {
+    background: var(--white);
+    border: 0;
+    color: var(--blue-dark);
+    cursor: pointer;
+    font: inherit;
+    padding: 0.72rem 0.8rem;
+    text-align: left;
+}
+
+.state-combobox-list button:hover,
+.state-combobox-list button:focus {
+    background: #eef7f3;
+    color: var(--green);
+    outline: none;
+}
+
 .auth-card button {
     margin-top: 1.2rem;
 }
@@ -1034,7 +1101,7 @@ a {
 .fiscal-kpi-grid {
     display: grid;
     gap: 0.9rem;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     margin: 1.25rem 1.5rem;
 }
 
@@ -1067,6 +1134,62 @@ a {
     color: var(--muted);
     display: block;
     margin-top: 0.45rem;
+}
+
+.quick-actions-grid {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.quick-actions-grid a {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--blue-dark);
+    display: grid;
+    gap: 0.35rem;
+    padding: 1rem;
+}
+
+.quick-actions-grid a:hover,
+.quick-actions-grid a:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 0.18rem rgba(0, 99, 65, 0.1);
+    color: var(--blue-dark);
+}
+
+.quick-actions-grid strong {
+    font-size: 0.98rem;
+}
+
+.quick-actions-grid span {
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.sat-help-grid {
+    display: grid;
+    gap: 0.9rem;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.sat-help-grid div {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.sat-help-grid strong {
+    color: var(--blue-dark);
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.sat-help-grid p {
+    color: var(--muted);
+    margin: 0;
 }
 
 .panel-header {
@@ -1195,6 +1318,8 @@ a {
     }
 
     .fiscal-kpi-grid,
+    .quick-actions-grid,
+    .sat-help-grid,
     .profile-form {
         grid-template-columns: 1fr;
     }

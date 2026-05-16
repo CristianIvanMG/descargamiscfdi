@@ -18,10 +18,12 @@ class RfcController
 
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $validated = $request->validate([
             'rfc' => ['required', 'string', 'min:12', 'max:13', new RfcValido()],
-            'razon_social' => ['required', 'string', 'max:255'],
+            'razon_social' => ['required', 'string', 'max:255', 'regex:/^[\pL\s]+$/u'],
         ]);
+
+        $validated['razon_social'] = mb_strtoupper($validated['razon_social'], 'UTF-8');
 
         return back()->with('status', __('app.rfc.pending_schema'));
     }

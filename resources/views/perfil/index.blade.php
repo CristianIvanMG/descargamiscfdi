@@ -77,8 +77,8 @@
                         <label for="type">Tipo de usuario</label>
                         <select id="type" name="user_type" required>
                             <option value="">Selecciona una opción</option>
-                            <option @selected(old('user_type', $profile->user_type) === 'Contador independiente')>Contador independiente</option>
                             <option @selected(old('user_type', $profile->user_type) === 'Persona física')>Persona física</option>
+                            <option @selected(old('user_type', $profile->user_type) === 'Contador independiente')>Contador independiente</option>
                             <option @selected(old('user_type', $profile->user_type) === 'Despacho contable')>Despacho contable</option>
                         </select>
                     </div>
@@ -92,7 +92,7 @@
                     </div>
                     <div>
                         <label for="country">Zona fiscal / Estado</label>
-                        <select id="country" name="country" required>
+                        <select id="country" name="country" required data-state-combobox>
                             <option value="">Selecciona un estado</option>
                             @foreach ($estados as $estado)
                                 <option @selected(old('country', $profile->country) === $estado)>{{ $estado }}</option>

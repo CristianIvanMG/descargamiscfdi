@@ -21,8 +21,8 @@
                         <div id="rfcFeedback" class="form-text rfc-feedback" data-rfc-feedback="rfc">Formato: 12 o 13 caracteres con homoclave.</div>
                     </div>
                     <div class="col-12 col-md-6">
-                        <label class="form-label" for="razon_social">{{ __('app.rfc.business_name') }}</label>
-                        <input id="razon_social" class="form-control" name="razon_social" required>
+                        <label class="form-label" for="razon_social">Nombre del cliente</label>
+                        <input id="razon_social" class="form-control" name="razon_social" required data-name-mask>
                     </div>
                     <div class="col-12 col-md-2">
                         <button class="btn btn-primary w-100" type="submit">{{ __('app.rfc.add') }}</button>

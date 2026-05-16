@@ -53,19 +53,20 @@
 
             <section class="orientation-box">
                 <div>
-                    <strong>Empieza descargando los CFDI de tu cliente para ver información aquí.</strong>
-                    <p>Cuando agregues un RFC y solicites la descarga masiva, este panel mostrará emitidos, recibidos, ingresos, gastos e IVA.</p>
+                    <strong>Resumen general</strong>
+                    <p>RFC activo: <b>{{ $profile?->rfc ?? 'Pendiente' }}</b> · Periodo: <b>{{ ucfirst($periodLabel) }}</b> · Tipo: <b>{{ $profile?->user_type ?? 'Pendiente' }}</b></p>
                 </div>
-                <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">Nueva descarga</a>
+                <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">Descargar CFDI</a>
             </section>
 
             <section class="fiscal-kpi-grid" aria-label="Indicadores fiscales">
                 @foreach ([
-                    ['label' => 'Total CFDI emitidos', 'value' => '0', 'note' => 'Mes actual'],
-                    ['label' => 'Total CFDI recibidos', 'value' => '0', 'note' => 'Mes actual'],
-                    ['label' => 'Ingresos acumulados', 'value' => '$0.00', 'note' => 'Según CFDI emitidos'],
-                    ['label' => 'Gastos deducibles detectados', 'value' => '$0.00', 'note' => 'Según CFDI recibidos'],
-                    ['label' => 'IVA trasladado / acreditable', 'value' => '$0.00 / $0.00', 'note' => 'Base para revisión'],
+                    ['label' => 'CFDI emitidos', 'value' => number_format($metrics['emitidos_count']), 'note' => 'Total de comprobantes del periodo'],
+                    ['label' => 'Monto emitido acumulado', 'value' => '$'.number_format($metrics['emitidos_total'], 2), 'note' => 'Ingresos detectados por CFDI'],
+                    ['label' => 'IVA trasladado', 'value' => '$'.number_format($metrics['iva_trasladado'], 2), 'note' => 'Base para declaración'],
+                    ['label' => 'CFDI recibidos', 'value' => number_format($metrics['recibidos_count']), 'note' => 'Comprobantes recibidos del periodo'],
+                    ['label' => 'Gastos detectados', 'value' => '$'.number_format($metrics['recibidos_total'], 2), 'note' => 'Egresos deducibles por revisar'],
+                    ['label' => 'IVA acreditable', 'value' => '$'.number_format($metrics['iva_acreditable'], 2), 'note' => 'Base para revisión fiscal'],
                 ] as $metric)
                     <article class="fiscal-kpi">
                         <span>{{ $metric['label'] }}</span>
@@ -73,6 +74,29 @@
                         <small>{{ $metric['note'] }}</small>
                     </article>
                 @endforeach
+            </section>
+
+            <section class="workspace-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Acciones rápidas</h2>
+                        <p>Inicia las tareas frecuentes sin buscar entre módulos.</p>
+                    </div>
+                </div>
+                <div class="quick-actions-grid">
+                    <a href="{{ url('/descargas/nueva') }}">
+                        <strong>Descargar CFDI</strong>
+                        <span>{{ $canUseMultipleRfcs ? 'Usa tu RFC o clientes registrados.' : 'Modo gratuito: RFC de tu perfil.' }}</span>
+                    </a>
+                    <a href="{{ url('/dashboard') }}">
+                        <strong>Cambiar periodo</strong>
+                        <span>Próximamente: filtros por mes y ejercicio fiscal.</span>
+                    </a>
+                    <a href="{{ url('/cfdi') }}">
+                        <strong>Ir a reportes</strong>
+                        <span>Revisa emitidos, recibidos, montos e IVA.</span>
+                    </a>
+                </div>
             </section>
 
             <section class="workspace-panel">
