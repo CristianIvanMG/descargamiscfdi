@@ -1192,6 +1192,337 @@ a {
     margin: 0;
 }
 
+.dashboard-sat-intro,
+.efirma-panel,
+.dashboard-help-section,
+.legal-panel {
+    background: #f8fbff;
+    border: 1px solid #c8d6e5;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    margin: 1.25rem 1.5rem;
+    padding: 1.5rem;
+}
+
+.dashboard-sat-header,
+.dashboard-help-heading {
+    text-align: center;
+}
+
+.dashboard-sat-header h2,
+.dashboard-help-heading h2,
+.efirma-title h2,
+.legal-panel h2 {
+    color: var(--blue-dark);
+    font-size: 1.35rem;
+    font-weight: 900;
+    margin: 0 0 0.45rem;
+}
+
+.dashboard-sat-header p,
+.dashboard-help-heading p,
+.efirma-title p {
+    color: #0f172a;
+    margin: 0;
+}
+
+.sat-process-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 1.6rem;
+}
+
+.sat-process-grid article {
+    align-items: flex-start;
+    background: #f8fafc;
+    border: 1px solid #c8d6e5;
+    border-radius: 8px;
+    display: flex;
+    gap: 0.9rem;
+    min-height: 118px;
+    padding: 1rem;
+}
+
+.sat-process-grid span,
+.efirma-title > span,
+.file-drop span {
+    align-items: center;
+    background: #e6f3fb;
+    border-radius: 8px;
+    color: #0284c7;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-weight: 900;
+    height: 38px;
+    justify-content: center;
+    width: 38px;
+}
+
+.sat-process-grid strong {
+    color: var(--blue-dark);
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.55rem;
+}
+
+.sat-process-grid p {
+    color: #0f172a;
+    margin: 0;
+}
+
+.sat-requirements {
+    background: #fffbf3;
+    border: 1px solid #f5c26b;
+    border-radius: 8px;
+    display: flex;
+    gap: 0.85rem;
+    margin-top: 1.5rem;
+    padding: 1rem;
+}
+
+.sat-warning-icon,
+.help-item > span {
+    align-items: center;
+    background: #fff3d8;
+    border-radius: 50%;
+    color: #d97706;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-weight: 900;
+    height: 22px;
+    justify-content: center;
+    width: 22px;
+}
+
+.sat-requirements strong {
+    color: var(--blue-dark);
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.sat-requirements ul {
+    display: grid;
+    gap: 0.45rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sat-requirements li {
+    color: #0f172a;
+}
+
+.sat-requirements li span {
+    color: var(--green);
+    font-weight: 900;
+    margin-right: 0.45rem;
+}
+
+.sat-start-link {
+    color: var(--blue-dark);
+    display: table;
+    font-weight: 800;
+    margin: 1.35rem auto 0;
+}
+
+.efirma-title {
+    align-items: center;
+    display: flex;
+    gap: 0.85rem;
+    margin-bottom: 1.4rem;
+}
+
+.security-note {
+    align-items: flex-start;
+    background: #eef8ff;
+    border: 1px solid #a8d8f0;
+    border-radius: 8px;
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1.6rem;
+    padding: 1rem;
+}
+
+.security-note span {
+    color: #0284c7;
+    flex: 0 0 auto;
+    font-weight: 900;
+}
+
+.security-note strong {
+    color: var(--blue-dark);
+    display: block;
+    margin-bottom: 0.35rem;
+}
+
+.security-note p {
+    margin: 0;
+}
+
+.efirma-form-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 1fr 1fr;
+}
+
+.efirma-field.full {
+    grid-column: 1 / -1;
+}
+
+.efirma-field > label:first-child {
+    color: var(--blue-dark);
+    display: block;
+    font-weight: 900;
+    margin-bottom: 0.55rem;
+}
+
+.efirma-field input[type="file"] {
+    height: 1px;
+    opacity: 0;
+    position: absolute;
+    width: 1px;
+}
+
+.file-drop {
+    align-items: center;
+    background: #f8fafc;
+    border: 2px dashed #bfd0e3;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    gap: 0.8rem;
+    min-height: 78px;
+    padding: 1rem;
+}
+
+.file-drop:hover,
+.file-drop:focus {
+    border-color: #0284c7;
+}
+
+.file-drop strong,
+.file-drop small {
+    display: block;
+}
+
+.file-drop small {
+    color: var(--muted);
+}
+
+.efirma-field input[type="password"] {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    font: inherit;
+    min-height: 44px;
+    padding: 0.72rem 0.85rem;
+    width: 100%;
+}
+
+.efirma-form-grid .btn {
+    min-height: 44px;
+}
+
+.dashboard-help-section {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 1.25rem 0;
+}
+
+.dashboard-help-heading {
+    border-top: 1px solid #c8d6e5;
+    margin: 0 1.5rem;
+    padding-top: 2rem;
+}
+
+.help-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: 1fr 1fr;
+    margin: 1.5rem 1.5rem 0;
+}
+
+.help-card {
+    background: #f8fbff;
+    border: 1px solid #c8d6e5;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    padding: 1.4rem;
+}
+
+.help-card h3 {
+    color: var(--blue-dark);
+    font-size: 1.1rem;
+    font-weight: 900;
+    margin: 0 0 1.2rem;
+}
+
+.help-step,
+.help-item {
+    align-items: flex-start;
+    display: flex;
+    gap: 0.85rem;
+    margin-bottom: 1.05rem;
+}
+
+.help-step:last-child,
+.help-item:last-child {
+    margin-bottom: 0;
+}
+
+.help-step > span {
+    align-items: center;
+    background: #e1f1fa;
+    border-radius: 50%;
+    color: #0284c7;
+    display: inline-flex;
+    flex: 0 0 auto;
+    font-weight: 900;
+    height: 32px;
+    justify-content: center;
+    width: 32px;
+}
+
+.help-step strong,
+.help-item strong {
+    color: var(--blue-dark);
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.help-step p,
+.help-item p {
+    color: #0f172a;
+    margin: 0;
+}
+
+.legal-panel {
+    background: #f8fbff;
+}
+
+.legal-panel h2 {
+    margin-bottom: 1rem;
+}
+
+.legal-panel p {
+    color: #0f172a;
+    margin: 0 0 0.9rem;
+}
+
+.legal-panel p:last-child {
+    margin-bottom: 0;
+}
+
+.legal-panel span {
+    color: #0284c7;
+    display: inline-block;
+    font-weight: 900;
+    margin-right: 0.55rem;
+}
+
 .panel-header {
     align-items: start;
     border-bottom: 1px solid var(--line);
@@ -1320,14 +1651,23 @@ a {
     .fiscal-kpi-grid,
     .quick-actions-grid,
     .sat-help-grid,
+    .sat-process-grid,
+    .help-grid,
     .profile-form {
         grid-template-columns: 1fr;
     }
 
     .orientation-box,
-    .workspace-topbar {
+    .workspace-topbar,
+    .sat-requirements,
+    .efirma-title,
+    .security-note {
         align-items: flex-start;
         flex-direction: column;
+    }
+
+    .efirma-form-grid {
+        grid-template-columns: 1fr;
     }
 }
 
