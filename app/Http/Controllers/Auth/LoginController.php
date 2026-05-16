@@ -84,7 +84,7 @@ class LoginController
 
         try {
             if (! Schema::hasTable('user_profiles')) {
-                return redirect()->intended('/dashboard');
+                return $this->redirectAfterLogin($request, '/dashboard');
             }
 
             $user->loadMissing('profile');
@@ -93,7 +93,7 @@ class LoginController
                 return redirect('/perfil')->with('status', 'Completa tu perfil para empezar a trabajar con CFDI.');
             }
 
-            return redirect()->intended('/dashboard');
+            return $this->redirectAfterLogin($request, '/dashboard');
         } catch (Throwable $exception) {
             Log::error('Fallo posterior al login', [
                 'user_id' => $user->getKey(),
@@ -121,5 +121,18 @@ class LoginController
         throw ValidationException::withMessages([
             'email' => 'No fue posible iniciar sesión.',
         ]);
+    }
+
+    private function redirectAfterLogin(Request $request, string $fallback): RedirectResponse
+    {
+        $target = (string) ($request->session()->pull('url.intended')
+            ?: $request->session()->pull('last_private_url')
+            ?: $fallback);
+
+        if (! str_starts_with($target, url('/'))) {
+            $target = $fallback;
+        }
+
+        return redirect($target);
     }
 }

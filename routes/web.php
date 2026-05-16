@@ -12,12 +12,16 @@ use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'home')->name('home');
+Route::view('/', 'home')->middleware(App\Http\Middleware\RedirectAuthenticatedToDashboard::class)->name('home');
 Route::get('/favicon.ico', fn () => response(status: 204));
-Route::get('/login', [LoginController::class, 'create'])->name('login');
+Route::get('/login', [LoginController::class, 'create'])
+    ->middleware(App\Http\Middleware\RedirectAuthenticatedToDashboard::class)
+    ->name('login');
 Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:5,1')->name('login.store');
 Route::post('/logout', [LoginController::class, 'destroy'])->middleware('auth')->name('logout');
-Route::view('/registro', 'auth.register')->name('register');
+Route::view('/registro', 'auth.register')
+    ->middleware(App\Http\Middleware\RedirectAuthenticatedToDashboard::class)
+    ->name('register');
 Route::post('/registro', [RegistroController::class, 'store'])->middleware('throttle:5,1')->name('register.store');
 Route::get('/registro/confirmacion', [RegistroController::class, 'notice'])->name('verification.notice');
 Route::post('/registro/reenviar-confirmacion', [RegistroController::class, 'resend'])->middleware('throttle:3,10')->name('verification.resend');
@@ -26,10 +30,15 @@ Route::view('/registro/confirmado', 'auth.confirmed')->name('verification.confir
 Route::view('/recuperar', 'auth.forgot-password')->name('password.request');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
-    Route::get('/perfil', [PerfilController::class, 'edit'])->name('profile');
+    Route::get('/perfil', [PerfilController::class, 'edit'])
+        ->middleware(App\Http\Middleware\RememberPrivateRoute::class)
+        ->name('profile');
     Route::post('/perfil', [PerfilController::class, 'update'])->name('profile.update');
 
-    Route::middleware(App\Http\Middleware\EnsureProfileIsComplete::class)->group(function (): void {
+    Route::middleware([
+        App\Http\Middleware\EnsureProfileIsComplete::class,
+        App\Http\Middleware\RememberPrivateRoute::class,
+    ])->group(function (): void {
         Route::get('/dashboard', DashboardController::class)->name('dashboard');
         Route::post('/sat/autenticacion', [SatAuthenticationController::class, 'store'])
             ->middleware('throttle:3,1')
