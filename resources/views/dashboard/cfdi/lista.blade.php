@@ -5,10 +5,16 @@
         <div class="container">
             <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-4">
                 <div>
-                    <h1 class="h3 fw-bold mb-1">{{ __('app.cfdi.heading') }}</h1>
-                    <p class="text-secondary mb-0">{{ __('app.cfdi.subtitle') }}</p>
+                    <h1 class="h3 fw-bold mb-1">CFDI</h1>
+                    <p class="text-secondary mb-0">Consulta, filtra y descarga CFDI emitidos y recibidos desde una sola sección.</p>
                 </div>
                 <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">{{ __('app.dashboard.new_download') }}</a>
+            </div>
+
+            <div class="cfdi-filter-tabs" role="tablist" aria-label="Filtros CFDI">
+                <a class="active" href="{{ url('/cfdi?tipo=todos') }}">Todos</a>
+                <a href="{{ url('/cfdi?tipo=emitidos') }}">Emitidos</a>
+                <a href="{{ url('/cfdi?tipo=recibidos') }}">Recibidos</a>
             </div>
 
             <div class="panel">

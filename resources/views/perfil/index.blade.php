@@ -17,9 +17,8 @@
 
             @if ($isComplete)
                 <nav>
-                    <a href="{{ url('/dashboard') }}"><span>▦</span>Dashboard</a>
-                    <a href="{{ url('/cfdi?tipo=emitidos') }}"><span>▤</span>CFDI Emitidos</a>
-                    <a href="{{ url('/cfdi?tipo=recibidos') }}"><span>▥</span>CFDI Recibidos</a>
+                    <a href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
+                    <a href="{{ url('/cfdi') }}"><span>▤</span>CFDI</a>
                     <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
                     <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
                     <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
@@ -28,7 +27,7 @@
             @else
                 <div class="sidebar-locked">
                     <strong>Configuración requerida</strong>
-                    <p>Completa tu perfil para habilitar el dashboard y las herramientas CFDI.</p>
+                    <p>Completa tu perfil para habilitar el inicio y las herramientas CFDI.</p>
                 </div>
             @endif
 
@@ -65,8 +64,9 @@
                 <form class="profile-form" action="{{ url('/perfil') }}" method="post">
                     @csrf
                     <div>
-                        <label for="business_name">Nombre del contador o despacho</label>
-                        <input id="business_name" name="business_name" type="text" value="{{ old('business_name', $profile->business_name) }}" placeholder="Ej. DESPACHO HERNÁNDEZ Y ASOCIADOS" required data-name-mask>
+                        <label for="business_name" data-profile-name-label>Nombre del contador / empresa</label>
+                        <input id="business_name" name="business_name" type="text" value="{{ old('business_name', $profile->business_name) }}" placeholder="NOMBRE PERSONAL O DE LA ORGANIZACIÓN" required data-name-mask data-profile-name-input data-registered-name="{{ auth()->user()?->name }}">
+                        <small class="field-help" data-profile-name-help>Selecciona el tipo de usuario para definir si representa a una persona o una organización.</small>
                     </div>
                     <div>
                         <label for="rfc">RFC</label>
@@ -100,10 +100,48 @@
                         </select>
                     </div>
                     <div class="profile-actions">
-                        <button class="btn btn-primary" type="submit">{{ $isComplete ? 'Guardar' : 'Guardar y entrar al dashboard' }}</button>
+                        <button class="btn btn-primary" type="submit">{{ $isComplete ? 'Guardar' : 'Guardar y entrar al inicio' }}</button>
                     </div>
                 </form>
             </section>
         </main>
     </div>
+
+    <script>
+        (() => {
+            const type = document.getElementById('type');
+            const nameInput = document.querySelector('[data-profile-name-input]');
+            const nameLabel = document.querySelector('[data-profile-name-label]');
+            const nameHelp = document.querySelector('[data-profile-name-help]');
+
+            const syncProfileName = () => {
+                if (!type || !nameInput || !nameLabel || !nameHelp) return;
+
+                if (type.value === 'Despacho contable') {
+                    nameLabel.textContent = 'Nombre de la organización / despacho';
+                    nameInput.placeholder = 'EJ. DESPACHO HERNÁNDEZ Y ASOCIADOS';
+                    nameInput.readOnly = false;
+                    nameInput.classList.remove('readonly-field');
+                    nameHelp.textContent = 'Este nombre representa a la organización que administrará clientes y RFC.';
+                    return;
+                }
+
+                if (type.value === 'Persona física' || type.value === 'Contador independiente') {
+                    nameLabel.textContent = 'Nombre personal';
+                    nameInput.placeholder = 'NOMBRE DEL TITULAR';
+                    nameHelp.textContent = 'Este nombre representa a la persona titular del perfil. Después de guardar queda como referencia del entorno fiscal.';
+                    return;
+                }
+
+                nameLabel.textContent = 'Nombre del contador / empresa';
+                nameInput.placeholder = 'NOMBRE PERSONAL O DE LA ORGANIZACIÓN';
+                nameInput.readOnly = false;
+                nameInput.classList.remove('readonly-field');
+                nameHelp.textContent = 'Selecciona el tipo de usuario para definir si representa a una persona o una organización.';
+            };
+
+            type?.addEventListener('change', syncProfileName);
+            syncProfileName();
+        })();
+    </script>
 @endsection

@@ -30,14 +30,15 @@ class RegistroController
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:120', 'regex:/^[\pL\s]+$/u'],
             'email' => ['required', 'email:rfc,dns', 'max:160', 'unique:users,email'],
             'password' => ['required', 'confirmed', Password::min(8)->letters()->numbers()],
         ]);
 
+        $email = mb_strtolower($validated['email']);
+
         $user = User::query()->create([
-            'name' => mb_strtoupper($validated['name'], 'UTF-8'),
-            'email' => mb_strtolower($validated['email']),
+            'name' => mb_strtoupper(strstr($email, '@', true) ?: 'USUARIO', 'UTF-8'),
+            'email' => $email,
             'password' => Hash::make($validated['password']),
         ]);
 
@@ -51,7 +52,7 @@ class RegistroController
             $user->delete();
 
             return back()
-                ->withInput($request->only('name', 'email'))
+                ->withInput($request->only('email'))
                 ->withErrors(['email' => 'No pudimos enviar el correo de confirmación. Revisa la configuración SMTP en el servidor.']);
         }
 

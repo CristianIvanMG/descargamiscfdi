@@ -729,6 +729,18 @@ a {
     min-height: 1rem;
 }
 
+.field-help {
+    color: var(--muted);
+    display: block;
+    font-size: 0.82rem;
+    margin-top: 0.35rem;
+}
+
+.readonly-field {
+    background: #eef3f8;
+    color: var(--muted);
+}
+
 @keyframes loginShake {
     0%, 100% {
         transform: translateX(0);
@@ -974,10 +986,10 @@ a {
 
 .sidebar-logout button {
     align-items: center;
-    background: rgba(255, 255, 255, 0.08);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.08));
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 8px;
-    color: #d8e5ef;
+    color: var(--white);
     display: flex;
     font-weight: 800;
     gap: 0.65rem;
@@ -986,10 +998,21 @@ a {
     width: 100%;
 }
 
+.sidebar-logout button span {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.14);
+    border-radius: 6px;
+    display: inline-flex;
+    height: 26px;
+    justify-content: center;
+    width: 26px;
+}
+
 .sidebar-logout button:hover,
 .sidebar-logout button:focus {
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(0, 99, 65, 0.95);
     color: var(--white);
+    outline: none;
 }
 
 .workspace-main {
@@ -1166,6 +1189,34 @@ a {
 .quick-actions-grid span {
     color: var(--muted);
     font-size: 0.88rem;
+}
+
+.future-section[hidden] {
+    display: none !important;
+}
+
+.cfdi-filter-tabs {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    display: inline-flex;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+    padding: 0.25rem;
+}
+
+.cfdi-filter-tabs a {
+    border-radius: 6px;
+    color: var(--blue-dark);
+    font-weight: 800;
+    padding: 0.55rem 0.85rem;
+}
+
+.cfdi-filter-tabs a:hover,
+.cfdi-filter-tabs a:focus,
+.cfdi-filter-tabs a.active {
+    background: #eef7f3;
+    color: var(--green);
 }
 
 .sat-help-grid {
@@ -1359,6 +1410,40 @@ a {
 
 .security-note p {
     margin: 0;
+}
+
+.sat-connection-status {
+    border-radius: 8px;
+    border: 1px solid;
+    margin-bottom: 1.2rem;
+    padding: 1rem;
+}
+
+.sat-connection-status strong {
+    display: block;
+    font-size: 1rem;
+    font-weight: 900;
+    margin-bottom: 0.25rem;
+}
+
+.sat-connection-status p {
+    margin: 0;
+}
+
+.sat-connection-status.is-disconnected {
+    background: #fff1f0;
+    border-color: #f2aaa4;
+    color: #7a1d17;
+}
+
+.sat-connection-status.is-connected {
+    background: #e6f4ef;
+    border-color: #9fd4bd;
+    color: #005c3d;
+}
+
+.sat-connection-status.status-attention {
+    animation: loginShake 0.18s ease-in-out 2;
 }
 
 .efirma-form-grid {

@@ -11,7 +11,7 @@
                 <strong>ContaPro</strong>
             </a>
             <nav>
-                <a href="{{ url('/dashboard') }}"><span>▦</span>Dashboard</a>
+                <a href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
                 <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
                 <a class="active" href="{{ url('/suscripcion/upgrade') }}"><span>▧</span>Membresía</a>
             </nav>
@@ -25,7 +25,7 @@
             <header class="workspace-topbar">
                 <div>
                     <h1>Membresía requerida</h1>
-                    <p>El plan gratuito está disponible solo para persona física.</p>
+                    <p>El modo gratuito permite trabajar con el RFC registrado en tu perfil.</p>
                 </div>
             </header>
 
@@ -33,14 +33,14 @@
                 <div class="panel-header">
                     <div>
                         <h2>Activa un plan para herramientas avanzadas</h2>
-                        <p>Contadores independientes y despachos requieren plan para descargas avanzadas, múltiples clientes, rangos amplios y reportes.</p>
+                        <p>Contadores independientes y despachos requieren plan para clientes, múltiples RFC, rangos amplios y reportes avanzados.</p>
                     </div>
                 </div>
                 @if (session('status'))
                     <div class="auth-success">{{ session('status') }}</div>
                 @endif
                 <a class="btn btn-primary" href="{{ url('/suscripcion/planes') }}">Ver planes</a>
-                <a class="btn btn-outline-primary ms-2" href="{{ url('/dashboard') }}">Volver al dashboard</a>
+                <a class="btn btn-outline-primary ms-2" href="{{ url('/dashboard') }}">Volver al inicio</a>
             </section>
         </main>
     </div>

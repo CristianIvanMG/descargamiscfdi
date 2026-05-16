@@ -103,12 +103,12 @@ return [
     'dashboard' => [
         'chart_label' => 'Gráfica de CFDI descargados',
         'chart_title' => 'Resumen fiscal',
-        'heading' => 'Dashboard',
+        'heading' => 'Inicio',
         'issued' => 'Emitidos',
         'new_download' => 'Nueva descarga',
         'received' => 'Recibidos',
         'subtitle' => 'Vista inicial para métricas fiscales por RFC.',
-        'title' => 'Dashboard',
+        'title' => 'Inicio',
         'vat_charged' => 'IVA trasladado',
         'vat_creditable' => 'IVA acreditable',
     ],
@@ -135,7 +135,7 @@ return [
     ],
     'nav' => [
         'cfdi' => 'CFDI',
-        'dashboard' => 'Dashboard',
+        'dashboard' => 'Inicio',
         'downloads' => 'Descargas',
         'plans' => 'Planes',
         'toggle' => 'Abrir navegación',

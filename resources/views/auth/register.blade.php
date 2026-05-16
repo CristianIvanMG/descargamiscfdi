@@ -19,9 +19,6 @@
 
                 <form class="auth-card" action="{{ url('/registro') }}" method="post" aria-label="Registro ContaPro">
                     @csrf
-                    <label for="name">Nombre completo</label>
-                    <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" required data-name-mask>
-
                     <label for="email">Correo electrónico</label>
                     <div class="validated-input-wrap">
                         <input id="email" name="email" type="email" value="{{ old('email', request('email')) }}" autocomplete="email" required data-email-validation="strict" aria-describedby="emailFeedback">

@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => 'Dashboard fiscal | ContaPro',
+    'title' => 'Inicio fiscal | ContaPro',
     'hideNav' => true,
 ])
 
@@ -11,9 +11,8 @@
                 <strong>ContaPro</strong>
             </a>
             <nav>
-                <a class="active" href="{{ url('/dashboard') }}"><span>▦</span>Dashboard</a>
-                <a href="{{ url('/cfdi?tipo=emitidos') }}"><span>▤</span>CFDI Emitidos</a>
-                <a href="{{ url('/cfdi?tipo=recibidos') }}"><span>▥</span>CFDI Recibidos</a>
+                <a class="active" href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
+                <a href="{{ url('/cfdi') }}"><span>▤</span>CFDI</a>
                 <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
                 <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
                 <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
@@ -28,7 +27,7 @@
         <main class="workspace-main">
             <header class="workspace-topbar">
                 <div>
-                    <h1>Dashboard</h1>
+                    <h1>Inicio</h1>
                     <p>Resumen fiscal del mes actual</p>
                 </div>
                 <div class="workspace-actions">
@@ -76,7 +75,7 @@
                 @endforeach
             </section>
 
-            <section class="workspace-panel">
+            <section class="workspace-panel future-section" hidden>
                 <div class="panel-header">
                     <div>
                         <h2>Acciones rápidas</h2>
@@ -163,6 +162,11 @@
                     </div>
                 </div>
 
+                <div class="sat-connection-status is-disconnected" data-sat-status>
+                    <strong data-sat-status-title>Conexión con el SAT no establecida</strong>
+                    <p data-sat-status-copy>Carga tu certificado, llave privada y contraseña para validar la e.firma antes de intercambiar información con el SAT.</p>
+                </div>
+
                 <div class="efirma-form-grid">
                     <div class="efirma-field full">
                         <label for="dashboard_cer">Certificado (.cer)</label>
@@ -189,8 +193,8 @@
                         <input id="dashboard_efirma_password" type="password" placeholder="Ingresa tu contraseña" autocomplete="off">
                     </div>
 
-                    <button class="btn btn-outline-primary" type="button">Limpiar</button>
-                    <a class="btn btn-primary" href="{{ url('/descargas/nueva') }}">Validar e.firma</a>
+                    <button class="btn btn-outline-primary" type="button" data-efirma-clear>Limpiar</button>
+                    <button class="btn btn-primary" type="button" data-efirma-connect>Conectar e.firma</button>
                 </div>
             </section>
 
@@ -253,7 +257,7 @@
                 @endforeach
             </section>
 
-            <section class="workspace-panel">
+            <section class="workspace-panel future-section" hidden>
                 <div class="panel-header">
                     <h2>Actividad reciente de CFDI</h2>
                     <a href="{{ url('/cfdi') }}">Ver todos</a>
@@ -290,4 +294,55 @@
             </section>
         </main>
     </div>
+
+    <script>
+        (() => {
+            const status = document.querySelector('[data-sat-status]');
+            const statusTitle = document.querySelector('[data-sat-status-title]');
+            const statusCopy = document.querySelector('[data-sat-status-copy]');
+            const connect = document.querySelector('[data-efirma-connect]');
+            const clear = document.querySelector('[data-efirma-clear]');
+            const fields = [
+                document.getElementById('dashboard_cer'),
+                document.getElementById('dashboard_key'),
+                document.getElementById('dashboard_efirma_password'),
+            ];
+
+            const setDisconnected = () => {
+                status?.classList.remove('is-connected');
+                status?.classList.add('is-disconnected');
+                if (statusTitle) statusTitle.textContent = 'Conexión con el SAT no establecida';
+                if (statusCopy) statusCopy.textContent = 'Carga tu certificado, llave privada y contraseña para validar la e.firma antes de intercambiar información con el SAT.';
+                if (connect) {
+                    connect.textContent = 'Conectar e.firma';
+                    connect.disabled = false;
+                }
+            };
+
+            connect?.addEventListener('click', () => {
+                const ready = fields.every((field) => field && field.value);
+
+                if (!ready) {
+                    setDisconnected();
+                    status?.classList.add('status-attention');
+                    window.setTimeout(() => status?.classList.remove('status-attention'), 500);
+                    return;
+                }
+
+                status?.classList.remove('is-disconnected');
+                status?.classList.add('is-connected');
+                if (statusTitle) statusTitle.textContent = 'Conexión con el SAT validada correctamente';
+                if (statusCopy) statusCopy.textContent = 'La e.firma fue validada en esta sesión. Ya puedes iniciar solicitudes de descarga CFDI.';
+                connect.textContent = 'Conexión establecida';
+                connect.disabled = true;
+            });
+
+            clear?.addEventListener('click', () => {
+                fields.forEach((field) => {
+                    if (field) field.value = '';
+                });
+                setDisconnected();
+            });
+        })();
+    </script>
 @endsection
