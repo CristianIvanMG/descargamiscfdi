@@ -32,6 +32,11 @@
                 </div>
                 <div class="workspace-actions">
                     <a class="btn btn-primary" href="{{ session('sat_authenticated') ? url('/descargas/nueva') : url('/dashboard#efirma-panel') }}">Descargar CFDI</a>
+                    @if ($canExportExcel)
+                        <a class="btn btn-outline-primary" href="{{ url('/cfdi/exportar?'.http_build_query($filters)) }}">Exportar a Excel</a>
+                    @else
+                        <a class="btn btn-outline-primary" href="{{ url('/suscripcion/upgrade') }}">Exportar a Excel</a>
+                    @endif
                 </div>
             </header>
 
@@ -42,6 +47,24 @@
                     <a class="btn btn-primary" href="{{ url('/dashboard#efirma-panel') }}">Conectar e.firma</a>
                 </section>
             @endunless
+
+            @if (session('show_donation_prompt'))
+                <section class="donation-banner">
+                    <div>
+                        <strong>Apoya el desarrollo de herramientas gratuitas para la comunidad.</strong>
+                        <p>Tu aportacion ayuda a mantener disponible la descarga gratuita de CFDI para mas usuarios.</p>
+                    </div>
+                    <a class="btn btn-primary" href="{{ url('/donaciones/mercadopago') }}">Realizar donacion</a>
+                </section>
+            @endif
+
+            @if ($showUpgradePrompt)
+                <section class="sat-connection-status status-attention">
+                    <strong>Desbloquea consultas para multiples RFC</strong>
+                    <p>Ya probaste el flujo gratuito. Con una suscripcion puedes gestionar clientes, rangos avanzados, mayor volumen y reportes exportables.</p>
+                    <a class="btn btn-primary" href="{{ url('/suscripcion/planes') }}">Ver planes</a>
+                </section>
+            @endif
 
             <section class="orientation-box">
                 <div>
@@ -65,7 +88,7 @@
                             <article class="cfdi-step active">
                                 <span>1</span>
                                 <strong>Configura</strong>
-                                <p>Selecciona RFC, fecha inicio, fecha fin y tipo {{ $tab['type'] }}. Se recomienda descargar por mes.</p>
+                                <p>Selecciona RFC, fecha inicio, fecha fin y tipo {{ $tab['type'] }}. En modo gratuito el RFC queda bloqueado y el rango máximo es 1 mes.</p>
                             </article>
                             <article class="cfdi-step {{ session('sat_authenticated') ? 'done' : 'error' }}">
                                 <span>2</span>
@@ -89,25 +112,26 @@
                             </article>
                         </div>
 
-                        <form class="cfdi-request-panel" method="get" action="{{ url('/cfdi') }}">
+                        <form class="cfdi-request-panel" method="post" action="{{ url('/descargas') }}">
+                            @csrf
                             <input type="hidden" name="tipo" value="{{ $tab['type'] }}">
                             <div>
                                 <label>RFC</label>
-                                <input name="rfc" value="{{ $filters['rfc'] }}" placeholder="RFC del perfil o cliente" data-rfc-mask>
+                                <input name="rfc" value="{{ $canUseMultipleRfcs ? $filters['rfc'] : $profile?->rfc }}" placeholder="RFC del perfil o cliente" @readonly(! $canUseMultipleRfcs) data-rfc-mask required>
                             </div>
                             <div>
                                 <label>Fecha inicio</label>
-                                <input name="fecha_inicio" type="date" value="{{ $filters['fecha_inicio'] }}">
+                                <input name="fecha_inicio" type="date" value="{{ $filters['fecha_inicio'] }}" required>
                             </div>
                             <div>
                                 <label>Fecha fin</label>
-                                <input name="fecha_fin" type="date" value="{{ $filters['fecha_fin'] }}">
+                                <input name="fecha_fin" type="date" value="{{ $filters['fecha_fin'] }}" required>
                             </div>
                             <div>
                                 <label>Tipo CFDI</label>
                                 <input value="{{ ucfirst($tab['type']) }}" readonly>
                             </div>
-                            <button class="btn btn-primary" type="button" @disabled(! session('sat_authenticated'))>Solicitar descarga</button>
+                            <button class="btn btn-primary" type="submit" @disabled(! session('sat_authenticated'))>Solicitar descarga</button>
                         </form>
 
                         <div class="cfdi-status-row">
@@ -171,10 +195,56 @@
                     </div>
                     <div>
                         <label for="rfc">RFC</label>
-                        <input id="rfc" name="rfc" value="{{ $filters['rfc'] }}" placeholder="Filtrar por RFC" data-rfc-mask>
+                        <input id="rfc" name="rfc" value="{{ $filters['rfc'] }}" placeholder="Filtrar por RFC" @readonly(! $canUseMultipleRfcs) data-rfc-mask>
                     </div>
                     <button class="btn btn-primary" type="submit">Aplicar filtros</button>
                 </form>
+            </section>
+
+            <section class="workspace-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Historial de solicitudes SAT</h2>
+                        <p>Evita repetir descargas: cada solicitud queda ligada a tu usuario y RFC consultado.</p>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="fiscal-table">
+                        <thead>
+                        <tr>
+                            <th>RFC</th>
+                            <th>Tipo</th>
+                            <th>Periodo</th>
+                            <th>Estado</th>
+                            <th>RequestId SAT</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @forelse ($downloadHistory as $item)
+                            <tr>
+                                <td>{{ $item->rfc ?? $profile?->rfc }}</td>
+                                <td>{{ ucfirst($item->tipo) }}</td>
+                                <td>{{ $item->fecha_inicio }} a {{ $item->fecha_fin }}</td>
+                                <td><span class="cfdi-status active">{{ $item->estado }}</span></td>
+                                <td>{{ $item->solicitud_id ?? 'Pendiente' }}</td>
+                                <td class="text-end">
+                                    <a href="{{ url('/descargas/'.$item->id.'/estado') }}">Ver estado</a>
+                                    <form class="inline-delete-form" method="post" action="{{ url('/descargas/'.$item->id) }}">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit">Eliminar</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="text-center text-secondary py-4">Todavia no hay solicitudes guardadas.</td>
+                            </tr>
+                        @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
             <section class="workspace-panel">

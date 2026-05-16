@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CfdiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DescargaController;
+use App\Http\Controllers\DonationController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\RfcController;
 use App\Http\Controllers\SatAuthenticationController;
@@ -46,14 +47,16 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
 
         Route::prefix('cfdi')->name('cfdi.')->group(function (): void {
             Route::get('/', [CfdiController::class, 'index'])->name('index');
+            Route::get('/exportar', [CfdiController::class, 'export'])->name('export');
             Route::get('/{cfdi}', [CfdiController::class, 'show'])->name('show');
         });
 
         Route::middleware(App\Http\Middleware\EnsureSatIsAuthenticated::class)->group(function (): void {
             Route::prefix('descargas')->name('descargas.')->group(function (): void {
                 Route::get('/nueva', [DescargaController::class, 'create'])->name('create');
-                Route::post('/', [DescargaController::class, 'store'])->name('store');
+                Route::post('/', [DescargaController::class, 'store'])->middleware('throttle:10,60')->name('store');
                 Route::get('/{descargaJob}/estado', [DescargaController::class, 'show'])->name('show');
+                Route::delete('/{descargaJob}', [DescargaController::class, 'destroy'])->name('destroy');
             });
 
             Route::middleware(App\Http\Middleware\EnsureMembershipAllowsAction::class)->group(function (): void {
@@ -64,6 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::get('/suscripcion/planes', [SuscripcionController::class, 'plans'])->name('suscripcion.planes');
         Route::post('/suscripcion/checkout', [SuscripcionController::class, 'checkout'])->name('suscripcion.checkout');
         Route::view('/suscripcion/upgrade', 'suscripcion.upgrade')->name('suscripcion.upgrade');
+        Route::get('/donaciones/mercadopago', [DonationController::class, 'mercadoPago'])->name('donaciones.mercadopago');
     });
 });
 

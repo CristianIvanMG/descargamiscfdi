@@ -12,8 +12,9 @@ class SuscripcionController
         return view('suscripcion.planes', [
             'planes' => [
                 ['clave' => 'gratis', 'nombre' => __('app.plans.free'), 'precio' => 0],
-                ['clave' => 'pro', 'nombre' => __('app.plans.pro'), 'precio' => 449],
-                ['clave' => 'despacho', 'nombre' => __('app.plans.firm'), 'precio' => 1299],
+                ['clave' => 'mensual', 'nombre' => 'Mensual', 'precio' => 99],
+                ['clave' => 'anual_promo', 'nombre' => 'Anual promoción', 'precio' => 199],
+                ['clave' => 'anual', 'nombre' => 'Anual completa', 'precio' => 399],
             ],
         ]);
     }

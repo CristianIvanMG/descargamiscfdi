@@ -20,6 +20,7 @@
                             <input type="hidden" name="plan" value="{{ $plan['clave'] }}">
                             <h2 class="h5">{{ $plan['nombre'] }}</h2>
                             <p class="display-6 fw-bold">${{ number_format($plan['precio']) }}</p>
+                            <p class="text-secondary">Clientes, múltiples RFC, rangos avanzados, historial y exportación a Excel.</p>
                             <button class="btn btn-primary w-100" type="submit">{{ __('app.suscripcion.choose') }}</button>
                         </form>
                     </div>

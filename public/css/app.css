@@ -1440,6 +1440,42 @@ a {
     margin: 0;
 }
 
+.donation-banner {
+    align-items: center;
+    background: #eef8ff;
+    border: 1px solid #a8d8f0;
+    border-radius: 8px;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.donation-banner strong {
+    color: var(--blue-dark);
+}
+
+.donation-banner p {
+    color: var(--muted);
+    margin: 0.25rem 0 0;
+}
+
+.inline-delete-form {
+    display: inline-flex;
+    margin-left: 12px;
+}
+
+.inline-delete-form button {
+    background: transparent;
+    border: 0;
+    color: #b91c1c;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 0;
+}
+
 .dashboard-sat-intro,
 .efirma-panel,
 .dashboard-help-section,
@@ -1943,6 +1979,7 @@ a {
     }
 
     .orientation-box,
+    .donation-banner,
     .workspace-topbar,
     .sat-requirements,
     .efirma-title,

@@ -23,7 +23,7 @@ class MembershipAccess
             return DB::table($table)
                 ->where('user_id', $user->id)
                 ->whereIn('estatus', ['activa', 'activo', 'active', 'paid'])
-                ->whereIn('plan', ['pro', 'despacho'])
+                ->whereIn('plan', ['mensual', 'anual_promo', 'anual', 'pro', 'despacho'])
                 ->where(function ($query): void {
                     $query->whereNull('periodo_fin')
                         ->orWhere('periodo_fin', '>', now());

@@ -33,7 +33,7 @@
                 <div class="panel-header">
                     <div>
                         <h2>Activa un plan para herramientas avanzadas</h2>
-                        <p>Contadores independientes y despachos requieren plan para clientes, múltiples RFC, rangos amplios y reportes avanzados.</p>
+                        <p>Ahorra hasta 70% del tiempo vs SAT. Desbloquea clientes, múltiples RFC, descargas avanzadas y exportación a Excel.</p>
                     </div>
                 </div>
                 @if (session('status'))
