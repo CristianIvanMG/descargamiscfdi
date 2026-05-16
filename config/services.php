@@ -11,6 +11,7 @@ return [
         'access_token' => env('MERCADOPAGO_ACCESS_TOKEN'),
         'public_key' => env('MERCADOPAGO_PUBLIC_KEY'),
         'webhook_secret' => env('MERCADOPAGO_WEBHOOK_SECRET'),
-        'checkout_url' => env('MERCADOPAGO_DONATION_URL'),
+        'base_url' => env('MERCADOPAGO_BASE_URL', 'https://api.mercadopago.com'),
+        'donation_amount' => env('MERCADOPAGO_DONATION_AMOUNT', 50),
     ],
 ];

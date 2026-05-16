@@ -2,31 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MercadoPagoService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Throwable;
 
 class DonationController
 {
-    public function mercadoPago(Request $request): RedirectResponse
+    public function mercadoPago(Request $request, MercadoPagoService $mercadoPago): RedirectResponse
     {
-        if (Schema::hasTable('donations')) {
-            DB::table('donations')->insert([
-                'user_id' => $request->user()->id,
-                'proveedor_pago' => 'mercadopago',
-                'estado' => 'pendiente',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        try {
+            return redirect()->away($mercadoPago->createDonationPreference($request->user()));
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return back()->with('status', 'No fue posible iniciar Mercado Pago. Revisa la configuracion de pagos.');
         }
-
-        $checkoutUrl = config('services.mercadopago.checkout_url');
-
-        if (! is_string($checkoutUrl) || $checkoutUrl === '') {
-            return back()->with('status', 'Mercado Pago todavía no está configurado.');
-        }
-
-        return redirect()->away($checkoutUrl);
     }
 }

@@ -31,14 +31,14 @@ class UserProfile extends Model
 
     public function isComplete(): bool
     {
-        $validTypes = ['Contador independiente', 'Persona física', 'Despacho contable'];
+        $validTypes = ['Contador independiente', 'Persona fisica', 'Persona física', 'Persona fÃ­sica', 'Despacho contable'];
 
         return $this->business_name !== null
             && in_array($this->user_type, $validTypes, true)
             && $this->primary_email !== null
             && $this->rfc !== null
             && $this->country !== null
-            && $this->country !== 'México'
+            && ! in_array($this->country, ['Mexico', 'México', 'MÃ©xico'], true)
             && $this->completed_at !== null;
     }
 }

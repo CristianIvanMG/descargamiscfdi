@@ -74,10 +74,12 @@ class CfdiController
                     $query->where('tipo', $filters['tipo']);
                 }
 
-                $query->where(function ($query) use ($rfc): void {
-                    $query->where('rfc_emisor', $rfc)
-                        ->orWhere('rfc_receptor', $rfc);
-                });
+                if ($rfc !== '') {
+                    $query->where(function ($query) use ($rfc): void {
+                        $query->where('rfc_emisor', $rfc)
+                            ->orWhere('rfc_receptor', $rfc);
+                    });
+                }
 
                 $query->orderByDesc('fecha_emision')->chunk(200, function ($rows) use ($handle): void {
                     foreach ($rows as $row) {

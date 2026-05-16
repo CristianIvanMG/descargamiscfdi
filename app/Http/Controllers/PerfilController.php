@@ -19,31 +19,31 @@ class PerfilController
         'Campeche',
         'Chiapas',
         'Chihuahua',
-        'Ciudad de México',
+        'Ciudad de Mexico',
         'Coahuila',
         'Colima',
         'Durango',
-        'Estado de México',
+        'Estado de Mexico',
         'Guanajuato',
         'Guerrero',
         'Hidalgo',
         'Jalisco',
-        'Michoacán',
+        'Michoacan',
         'Morelos',
         'Nayarit',
-        'Nuevo León',
+        'Nuevo Leon',
         'Oaxaca',
         'Puebla',
-        'Querétaro',
+        'Queretaro',
         'Quintana Roo',
-        'San Luis Potosí',
+        'San Luis Potosi',
         'Sinaloa',
         'Sonora',
         'Tabasco',
         'Tamaulipas',
         'Tlaxcala',
         'Veracruz',
-        'Yucatán',
+        'Yucatan',
         'Zacatecas',
     ];
 
@@ -74,21 +74,29 @@ class PerfilController
 
     public function update(Request $request): RedirectResponse
     {
+        $request->user()->loadMissing('profile');
+        $wasComplete = $request->user()->profile?->isComplete() ?? false;
+
         $validated = $request->validate([
-            'business_name' => ['required', 'string', 'max:160', 'regex:/^[\pL\s]+$/u'],
-            'rfc' => ['required', 'string', 'min:12', 'max:13', new RfcValido()],
-            'user_type' => ['required', Rule::in(['Contador independiente', 'Persona física', 'Despacho contable'])],
+            'business_name' => [$wasComplete ? 'nullable' : 'required', 'string', 'max:160', 'regex:/^[\pL\s]+$/u'],
+            'rfc' => [$wasComplete ? 'nullable' : 'required', 'string', 'min:12', 'max:13', new RfcValido()],
+            'user_type' => [$wasComplete ? 'nullable' : 'required', Rule::in(['Contador independiente', 'Persona fisica', 'Despacho contable'])],
             'primary_email' => ['required', 'email:rfc,dns', 'max:160'],
             'country' => ['required', Rule::in(self::ESTADOS_MEXICO)],
         ]);
 
-        $validated['business_name'] = mb_strtoupper($validated['business_name'], 'UTF-8');
+        if ($wasComplete && $request->user()->profile) {
+            $validated['business_name'] = $request->user()->profile->business_name;
+            $validated['rfc'] = $request->user()->profile->rfc;
+            $validated['user_type'] = $request->user()->profile->user_type;
+        } else {
+            $validated['business_name'] = mb_strtoupper((string) $validated['business_name'], 'UTF-8');
+            $validated['rfc'] = mb_strtoupper((string) $validated['rfc'], 'UTF-8');
+        }
 
         if (! Schema::hasTable('user_profiles')) {
             return redirect('/dashboard')->with('status', 'Perfil recibido. Falta activar almacenamiento de perfil en base de datos.');
         }
-
-        $wasComplete = $request->user()->profile?->isComplete() ?? false;
 
         $request->user()->profile()->updateOrCreate([
             'user_id' => $request->user()->id,

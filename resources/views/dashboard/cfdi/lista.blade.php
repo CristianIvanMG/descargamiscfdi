@@ -4,8 +4,15 @@
 ])
 
 @section('content')
+    @php
+        $canHistory = \App\Support\MembershipAccess::canAccessFullHistory(auth()->user());
+        $currentYear = now()->year;
+        $yearStart = now()->startOfYear()->toDateString();
+        $today = now()->toDateString();
+    @endphp
+
     <div class="app-workspace">
-        <aside class="app-sidebar" aria-label="Menú fiscal">
+        <aside class="app-sidebar" aria-label="Menu fiscal">
             <a class="workspace-brand" href="{{ url('/dashboard') }}">
                 <span>CP</span>
                 <strong>ContaPro</strong>
@@ -14,13 +21,15 @@
                 <a href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
                 <a class="active" href="{{ url('/cfdi') }}"><span>▤</span>CFDI</a>
                 <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
-                <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
+                @if ($canHistory)
+                    <a href="{{ url('/historial') }}"><span>▧</span>Historial</a>
+                @endif
                 <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
-                <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
+                <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuracion</a>
             </nav>
             <form class="sidebar-logout" action="{{ url('/logout') }}" method="post">
                 @csrf
-                <button type="submit"><span>↩</span>Cerrar sesión</button>
+                <button type="submit"><span>↩</span>Cerrar sesion</button>
             </form>
         </aside>
 
@@ -28,22 +37,18 @@
             <header class="workspace-topbar">
                 <div>
                     <h1>CFDI</h1>
-                    <p>Panel operativo para emitidos, recibidos, montos e IVA.</p>
+                    <p>Consulta y descarga CFDI emitidos y recibidos del SAT.</p>
                 </div>
                 <div class="workspace-actions">
                     <a class="btn btn-primary" href="{{ session('sat_authenticated') ? url('/descargas/nueva') : url('/dashboard#efirma-panel') }}">Descargar CFDI</a>
-                    @if ($canExportExcel)
-                        <a class="btn btn-outline-primary" href="{{ url('/cfdi/exportar?'.http_build_query($filters)) }}">Exportar a Excel</a>
-                    @else
-                        <a class="btn btn-outline-primary" href="{{ url('/suscripcion/upgrade') }}">Exportar a Excel</a>
-                    @endif
+                    <a class="btn btn-outline-primary" href="{{ url('/cfdi/exportar?'.http_build_query($filters)) }}">Exportar a Excel</a>
                 </div>
             </header>
 
             @unless (session('sat_authenticated'))
                 <section class="sat-connection-status is-disconnected cfdi-blocker">
-                    <strong>Conexión con el SAT no establecida</strong>
-                    <p>Para solicitar descargas reales primero valida tu e.firma en Inicio. Puedes revisar la estructura de CFDI, pero no iniciar solicitudes hasta conectar con SAT.</p>
+                    <strong>Conexion con el SAT no establecida</strong>
+                    <p>Primero valida tu e.firma en Inicio. Puedes revisar esta pantalla, pero no iniciar solicitudes hasta conectar con SAT.</p>
                     <a class="btn btn-primary" href="{{ url('/dashboard#efirma-panel') }}">Conectar e.firma</a>
                 </section>
             @endunless
@@ -52,7 +57,7 @@
                 <section class="donation-banner">
                     <div>
                         <strong>Apoya el desarrollo de herramientas gratuitas para la comunidad.</strong>
-                        <p>Tu aportacion ayuda a mantener disponible la descarga gratuita de CFDI para mas usuarios.</p>
+                        <p>Estas apoyando herramientas gratuitas para contadores en Mexico.</p>
                     </div>
                     <a class="btn btn-primary" href="{{ url('/donaciones/mercadopago') }}">Realizar donacion</a>
                 </section>
@@ -60,16 +65,22 @@
 
             @if ($showUpgradePrompt)
                 <section class="sat-connection-status status-attention">
-                    <strong>Desbloquea consultas para multiples RFC</strong>
-                    <p>Ya probaste el flujo gratuito. Con una suscripcion puedes gestionar clientes, rangos avanzados, mayor volumen y reportes exportables.</p>
+                    <strong>Gestiona multiples RFC con un plan premium</strong>
+                    <p>Ahorra hasta 70% del tiempo vs SAT. Desbloquea clientes, rangos avanzados y mayor volumen.</p>
                     <a class="btn btn-primary" href="{{ url('/suscripcion/planes') }}">Ver planes</a>
                 </section>
             @endif
 
             <section class="orientation-box">
                 <div>
-                    <strong>CFDI – Descarga y gestión</strong>
-                    <p>Consulta y descarga CFDI emitidos y recibidos del SAT.</p>
+                    <strong>CFDI - Descarga y gestion</strong>
+                    <p>
+                        @if ($canUseMultipleRfcs)
+                            Tu plan permite trabajar multiples RFC y clientes.
+                        @else
+                            Modo gratuito: RFC bloqueado a tu perfil. Solicitudes al SAT solo del ano {{ $currentYear }} y por mes.
+                        @endif
+                    </p>
                 </div>
             </section>
 
@@ -88,17 +99,17 @@
                             <article class="cfdi-step active">
                                 <span>1</span>
                                 <strong>Configura</strong>
-                                <p>Selecciona RFC, fecha inicio, fecha fin y tipo {{ $tab['type'] }}. En modo gratuito el RFC queda bloqueado y el rango máximo es 1 mes.</p>
+                                <p>Selecciona RFC, fechas y tipo {{ $tab['type'] }}. En modo gratuito el RFC queda bloqueado y el rango maximo es 1 mes.</p>
                             </article>
                             <article class="cfdi-step {{ session('sat_authenticated') ? 'done' : 'error' }}">
                                 <span>2</span>
-                                <strong>Autenticación SAT</strong>
-                                <p>{{ session('sat_authenticated') ? 'Sesión SAT validada correctamente.' : 'Primero valida tu e.firma en Inicio.' }}</p>
+                                <strong>Autenticacion SAT</strong>
+                                <p>{{ session('sat_authenticated') ? 'Sesion SAT validada correctamente.' : 'Primero valida tu e.firma en Inicio.' }}</p>
                             </article>
                             <article class="cfdi-step pending">
                                 <span>3</span>
                                 <strong>Solicita</strong>
-                                <p>Se crea la solicitud SAT y se guarda el RequestId para historial.</p>
+                                <p>Se crea la solicitud SAT y se guarda el RequestId para seguimiento.</p>
                             </article>
                             <article class="cfdi-step pending">
                                 <span>4</span>
@@ -112,7 +123,7 @@
                             </article>
                         </div>
 
-                        <form class="cfdi-request-panel" method="post" action="{{ url('/descargas') }}">
+                        <form class="cfdi-request-panel" method="post" action="{{ url('/descargas') }}" data-free-mode="{{ $canUseMultipleRfcs ? '0' : '1' }}">
                             @csrf
                             <input type="hidden" name="tipo" value="{{ $tab['type'] }}">
                             <div>
@@ -121,11 +132,11 @@
                             </div>
                             <div>
                                 <label>Fecha inicio</label>
-                                <input name="fecha_inicio" type="date" value="{{ $filters['fecha_inicio'] }}" required>
+                                <input name="fecha_inicio" type="date" value="{{ $filters['fecha_inicio'] }}" @if(! $canUseMultipleRfcs) min="{{ $yearStart }}" max="{{ $today }}" @endif required data-start-date>
                             </div>
                             <div>
                                 <label>Fecha fin</label>
-                                <input name="fecha_fin" type="date" value="{{ $filters['fecha_fin'] }}" required>
+                                <input name="fecha_fin" type="date" value="{{ $filters['fecha_fin'] }}" @if(! $canUseMultipleRfcs) min="{{ $yearStart }}" max="{{ $today }}" @endif required data-end-date>
                             </div>
                             <div>
                                 <label>Tipo CFDI</label>
@@ -137,7 +148,7 @@
                         <div class="cfdi-status-row">
                             <div class="cfdi-status active">Configura</div>
                             <div class="cfdi-status pending">Solicitud enviada al SAT</div>
-                            <div class="cfdi-status processing">Procesando información</div>
+                            <div class="cfdi-status processing">Procesando informacion</div>
                             <div class="cfdi-status done">Listo para descarga</div>
                             <div class="cfdi-status error">Error</div>
                         </div>
@@ -149,10 +160,10 @@
                 @foreach ([
                     ['label' => 'CFDI emitidos', 'value' => number_format($metrics['emitidos_count']), 'note' => 'Total de comprobantes del periodo'],
                     ['label' => 'Monto emitido acumulado', 'value' => '$'.number_format($metrics['emitidos_total'], 2), 'note' => 'Ingresos detectados por CFDI'],
-                    ['label' => 'IVA trasladado', 'value' => '$'.number_format($metrics['iva_trasladado'], 2), 'note' => 'Base para declaración'],
+                    ['label' => 'IVA trasladado', 'value' => '$'.number_format($metrics['iva_trasladado'], 2), 'note' => 'Base para declaracion'],
                     ['label' => 'CFDI recibidos', 'value' => number_format($metrics['recibidos_count']), 'note' => 'Comprobantes recibidos del periodo'],
                     ['label' => 'Gastos detectados', 'value' => '$'.number_format($metrics['recibidos_total'], 2), 'note' => 'Egresos deducibles por revisar'],
-                    ['label' => 'IVA acreditable', 'value' => '$'.number_format($metrics['iva_acreditable'], 2), 'note' => 'Base para revisión fiscal'],
+                    ['label' => 'IVA acreditable', 'value' => '$'.number_format($metrics['iva_acreditable'], 2), 'note' => 'Base para revision fiscal'],
                 ] as $metric)
                     <article class="fiscal-kpi">
                         <span>{{ $metric['label'] }}</span>
@@ -166,17 +177,11 @@
                 <div class="panel-header">
                     <div>
                         <h2>Filtros CFDI</h2>
-                        <p>La diferenciación entre emitidos y recibidos se controla aquí.</p>
+                        <p>La diferenciacion entre emitidos y recibidos se controla aqui.</p>
                     </div>
                 </div>
 
-                <div class="cfdi-filter-tabs" role="tablist" aria-label="Filtros CFDI">
-                    <a @class(['active' => $filters['tipo'] === 'todos']) href="{{ url('/cfdi?tipo=todos') }}">Todos</a>
-                    <a @class(['active' => $filters['tipo'] === 'emitidos']) href="{{ url('/cfdi?tipo=emitidos') }}">Emitidos</a>
-                    <a @class(['active' => $filters['tipo'] === 'recibidos']) href="{{ url('/cfdi?tipo=recibidos') }}">Recibidos</a>
-                </div>
-
-                <form class="cfdi-filter-panel" method="get" action="{{ url('/cfdi') }}">
+                <form class="cfdi-filter-panel" method="get" action="{{ url('/cfdi') }}" data-free-mode="{{ $canUseMultipleRfcs ? '0' : '1' }}">
                     <div>
                         <label for="tipo">Tipo</label>
                         <select id="tipo" name="tipo">
@@ -187,11 +192,11 @@
                     </div>
                     <div>
                         <label for="fecha_inicio">Fecha inicial</label>
-                        <input id="fecha_inicio" name="fecha_inicio" type="date" value="{{ $filters['fecha_inicio'] }}">
+                        <input id="fecha_inicio" name="fecha_inicio" type="date" value="{{ $filters['fecha_inicio'] }}" @if(! $canUseMultipleRfcs) min="{{ $yearStart }}" max="{{ $today }}" @endif data-start-date>
                     </div>
                     <div>
                         <label for="fecha_fin">Fecha final</label>
-                        <input id="fecha_fin" name="fecha_fin" type="date" value="{{ $filters['fecha_fin'] }}">
+                        <input id="fecha_fin" name="fecha_fin" type="date" value="{{ $filters['fecha_fin'] }}" @if(! $canUseMultipleRfcs) min="{{ $yearStart }}" max="{{ $today }}" @endif data-end-date>
                     </div>
                     <div>
                         <label for="rfc">RFC</label>
@@ -199,52 +204,6 @@
                     </div>
                     <button class="btn btn-primary" type="submit">Aplicar filtros</button>
                 </form>
-            </section>
-
-            <section class="workspace-panel">
-                <div class="panel-header">
-                    <div>
-                        <h2>Historial de solicitudes SAT</h2>
-                        <p>Evita repetir descargas: cada solicitud queda ligada a tu usuario y RFC consultado.</p>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="fiscal-table">
-                        <thead>
-                        <tr>
-                            <th>RFC</th>
-                            <th>Tipo</th>
-                            <th>Periodo</th>
-                            <th>Estado</th>
-                            <th>RequestId SAT</th>
-                            <th class="text-end">Acciones</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        @forelse ($downloadHistory as $item)
-                            <tr>
-                                <td>{{ $item->rfc ?? $profile?->rfc }}</td>
-                                <td>{{ ucfirst($item->tipo) }}</td>
-                                <td>{{ $item->fecha_inicio }} a {{ $item->fecha_fin }}</td>
-                                <td><span class="cfdi-status active">{{ $item->estado }}</span></td>
-                                <td>{{ $item->solicitud_id ?? 'Pendiente' }}</td>
-                                <td class="text-end">
-                                    <a href="{{ url('/descargas/'.$item->id.'/estado') }}">Ver estado</a>
-                                    <form class="inline-delete-form" method="post" action="{{ url('/descargas/'.$item->id) }}">
-                                        @csrf
-                                        @method('delete')
-                                        <button type="submit">Eliminar</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center text-secondary py-4">Todavia no hay solicitudes guardadas.</td>
-                            </tr>
-                        @endforelse
-                        </tbody>
-                    </table>
-                </div>
             </section>
 
             <section class="workspace-panel">
@@ -277,6 +236,8 @@
         (() => {
             const tabs = document.querySelectorAll('[data-cfdi-tab]');
             const panels = document.querySelectorAll('[data-cfdi-panel]');
+            const today = @json($today);
+            const yearStart = @json($yearStart);
 
             tabs.forEach((tab) => {
                 tab.addEventListener('click', () => {
@@ -284,6 +245,36 @@
                     tabs.forEach((item) => item.classList.toggle('active', item === tab));
                     panels.forEach((panel) => panel.classList.toggle('active', panel.dataset.cfdiPanel === target));
                 });
+            });
+
+            const addOneMonth = (value) => {
+                const date = new Date(`${value}T00:00:00`);
+                date.setMonth(date.getMonth() + 1);
+                return date.toISOString().slice(0, 10);
+            };
+
+            document.querySelectorAll('[data-free-mode="1"]').forEach((form) => {
+                const start = form.querySelector('[data-start-date]');
+                const end = form.querySelector('[data-end-date]');
+                if (!start || !end) return;
+
+                const clamp = () => {
+                    if (start.value && start.value < yearStart) start.value = yearStart;
+                    if (start.value && start.value > today) start.value = today;
+                    if (!start.value) return;
+
+                    const maxEnd = [addOneMonth(start.value), today].sort()[0];
+                    end.min = start.value;
+                    end.max = maxEnd;
+
+                    if (!end.value || end.value < start.value || end.value > maxEnd) {
+                        end.value = maxEnd;
+                    }
+                };
+
+                start.addEventListener('change', clamp);
+                end.addEventListener('change', clamp);
+                clamp();
             });
         })();
     </script>

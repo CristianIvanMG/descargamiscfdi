@@ -6,6 +6,8 @@ use App\Http\Controllers\CfdiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DescargaController;
 use App\Http\Controllers\DonationController;
+use App\Http\Controllers\HistorialController;
+use App\Http\Controllers\PagoController;
 use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\RfcController;
 use App\Http\Controllers\SatAuthenticationController;
@@ -68,8 +70,11 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         Route::post('/suscripcion/checkout', [SuscripcionController::class, 'checkout'])->name('suscripcion.checkout');
         Route::view('/suscripcion/upgrade', 'suscripcion.upgrade')->name('suscripcion.upgrade');
         Route::get('/donaciones/mercadopago', [DonationController::class, 'mercadoPago'])->name('donaciones.mercadopago');
+        Route::get('/pagos/mercadopago/retorno', [PagoController::class, 'mercadoPagoReturn'])->name('pagos.mercadopago.return');
+        Route::get('/historial', HistorialController::class)->name('historial.index');
     });
 });
 
 Route::post('/webhooks/conekta', [WebhookController::class, 'conekta'])->name('webhooks.conekta');
 Route::post('/webhooks/stripe', [WebhookController::class, 'stripe'])->name('webhooks.stripe');
+Route::post('/webhooks/mercadopago', [PagoController::class, 'mercadoPagoWebhook'])->name('webhooks.mercadopago');

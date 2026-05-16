@@ -23,7 +23,7 @@ class MembershipAccess
             return DB::table($table)
                 ->where('user_id', $user->id)
                 ->whereIn('estatus', ['activa', 'activo', 'active', 'paid'])
-                ->whereIn('plan', ['mensual', 'anual_promo', 'anual', 'pro', 'despacho'])
+                ->whereIn('plan', ['mensual', 'anual_basico', 'anual_completo', 'anual_promo', 'anual', 'pro', 'despacho'])
                 ->where(function ($query): void {
                     $query->whereNull('periodo_fin')
                         ->orWhere('periodo_fin', '>', now());
@@ -40,6 +40,37 @@ class MembershipAccess
 
         return in_array($profile?->user_type, ['Contador independiente', 'Despacho contable'], true)
             && self::hasActivePaidMembership($user);
+    }
+
+    public static function canAccessFullHistory(User $user): bool
+    {
+        $profile = $user->loadMissing('profile')->profile;
+
+        if ($profile?->user_type !== 'Despacho contable') {
+            return false;
+        }
+
+        $table = Schema::hasTable('suscripciones')
+            ? 'suscripciones'
+            : (Schema::hasTable('suscripcions') ? 'suscripcions' : null);
+
+        if ($table === null) {
+            return false;
+        }
+
+        try {
+            return DB::table($table)
+                ->where('user_id', $user->id)
+                ->whereIn('estatus', ['activa', 'activo', 'active', 'paid'])
+                ->where('plan', 'anual_completo')
+                ->where(function ($query): void {
+                    $query->whereNull('periodo_fin')
+                        ->orWhere('periodo_fin', '>', now());
+                })
+                ->exists();
+        } catch (Throwable) {
+            return false;
+        }
     }
 
     public static function isOwnProfileRfc(User $user, string $rfc): bool

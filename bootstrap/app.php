@@ -14,6 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(App\Http\Middleware\SecurityHeaders::class);
         $middleware->append(App\Http\Middleware\SessionSecurity::class);
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/mercadopago',
+            'webhooks/conekta',
+            'webhooks/stripe',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

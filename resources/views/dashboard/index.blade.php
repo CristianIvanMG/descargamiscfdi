@@ -4,6 +4,9 @@
 ])
 
 @section('content')
+    @php
+        $canHistory = \App\Support\MembershipAccess::canAccessFullHistory(auth()->user());
+    @endphp
     <div class="app-workspace">
         <aside class="app-sidebar" aria-label="Menú fiscal">
             <a class="workspace-brand" href="{{ url('/dashboard') }}">
@@ -17,6 +20,9 @@
                 <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
                 <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
                 <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
+                @if ($canHistory)
+                    <a href="{{ url('/historial') }}"><span>▧</span>Historial</a>
+                @endif
             </nav>
             <form class="sidebar-logout" action="{{ url('/logout') }}" method="post">
                 @csrf

@@ -88,17 +88,42 @@ CREATE TABLE IF NOT EXISTS suscripciones (
   id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
   user_id BIGINT UNSIGNED NOT NULL,
   plan VARCHAR(40) NOT NULL,
+  tipo_plan VARCHAR(40) NULL,
   proveedor_pago VARCHAR(40) NULL,
   proveedor_id VARCHAR(255) NULL,
   estatus VARCHAR(40) NOT NULL DEFAULT 'activa',
+  activo TINYINT(1) NOT NULL DEFAULT 1,
   periodo_inicio TIMESTAMP NULL,
   periodo_fin TIMESTAMP NULL,
+  fecha_vencimiento TIMESTAMP NULL,
   renovacion_automatica TINYINT(1) NOT NULL DEFAULT 0,
   created_at TIMESTAMP NULL,
   updated_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   KEY suscripciones_user_estatus_plan_index (user_id, estatus, plan),
   CONSTRAINT suscripciones_user_id_foreign FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS pagos (
+  id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id BIGINT UNSIGNED NOT NULL,
+  tipo_pago VARCHAR(30) NOT NULL,
+  plan VARCHAR(40) NULL,
+  monto DECIMAL(10,2) NOT NULL,
+  estado VARCHAR(40) NOT NULL DEFAULT 'pendiente',
+  proveedor_pago VARCHAR(40) NOT NULL DEFAULT 'mercadopago',
+  provider_payment_id VARCHAR(255) NULL,
+  provider_preference_id VARCHAR(255) NULL,
+  external_reference VARCHAR(255) NULL,
+  fecha_inicio TIMESTAMP NULL,
+  fecha_fin TIMESTAMP NULL,
+  payload JSON NULL,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  KEY pagos_external_reference_index (external_reference),
+  KEY pagos_user_tipo_estado_index (user_id, tipo_pago, estado),
+  CONSTRAINT pagos_user_id_foreign FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS donations (

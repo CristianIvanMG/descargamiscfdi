@@ -6,10 +6,11 @@
 @section('content')
     @php
         $isComplete = $profile->isComplete();
+        $canHistory = \App\Support\MembershipAccess::canAccessFullHistory(auth()->user());
     @endphp
 
     <div class="app-workspace">
-        <aside class="app-sidebar" aria-label="Menú fiscal">
+        <aside class="app-sidebar" aria-label="Menu fiscal">
             <a class="workspace-brand" href="{{ $isComplete ? url('/dashboard') : url('/perfil') }}">
                 <span>CP</span>
                 <strong>ContaPro</strong>
@@ -20,20 +21,21 @@
                     <a href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
                     <a href="{{ url('/cfdi') }}"><span>▤</span>CFDI</a>
                     <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
-                    <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
-                    <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
-                    <a class="active" href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
+                    @if ($canHistory)
+                        <a href="{{ url('/historial') }}"><span>▧</span>Historial</a>
+                    @endif
+                    <a class="active" href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuracion</a>
                 </nav>
             @else
                 <div class="sidebar-locked">
-                    <strong>Configuración requerida</strong>
+                    <strong>Configuracion requerida</strong>
                     <p>Completa tu perfil para habilitar el inicio y las herramientas CFDI.</p>
                 </div>
             @endif
 
             <form class="sidebar-logout" action="{{ url('/logout') }}" method="post">
                 @csrf
-                <button type="submit"><span>↩</span>Cerrar sesión</button>
+                <button type="submit"><span>↩</span>Cerrar sesion</button>
             </form>
         </aside>
 
@@ -41,15 +43,15 @@
             <header class="workspace-topbar">
                 <div>
                     <h1>Perfil de negocio</h1>
-                    <p>Completa tu entorno de trabajo para empezar con CFDI.</p>
+                    <p>{{ $isComplete ? 'Datos fiscales fijos del entorno de trabajo.' : 'Completa tu entorno de trabajo para empezar con CFDI.' }}</p>
                 </div>
             </header>
 
             <section class="workspace-panel profile-panel">
                 <div class="panel-header">
                     <div>
-                        <h2>Completa tu perfil para empezar a trabajar con CFDI.</h2>
-                        <p>Todos los campos son obligatorios. Esta configuración protege el flujo fiscal y evita datos incompletos.</p>
+                        <h2>{{ $isComplete ? 'Configuracion del perfil' : 'Completa tu perfil para empezar a trabajar con CFDI.' }}</h2>
+                        <p>{{ $isComplete ? 'Nombre, RFC y tipo de usuario quedan fijos para proteger permisos, historial y suscripciones.' : 'Todos los campos son obligatorios. Esta configuracion protege el flujo fiscal y evita datos incompletos.' }}</p>
                     </div>
                 </div>
 
@@ -58,29 +60,33 @@
                 @endif
 
                 @if ($errors->any())
-                    <div class="auth-error">Ocurrió un problema al cargar tu información. Intenta nuevamente.</div>
+                    <div class="auth-error">Ocurrio un problema al cargar tu informacion. Intenta nuevamente.</div>
                 @endif
 
                 <form class="profile-form" action="{{ url('/perfil') }}" method="post">
                     @csrf
                     <div>
                         <label for="business_name" data-profile-name-label>Nombre del contador / empresa</label>
-                        <input id="business_name" name="business_name" type="text" value="{{ old('business_name', $profile->business_name) }}" placeholder="NOMBRE PERSONAL O DE LA ORGANIZACIÓN" required data-name-mask data-profile-name-input data-registered-name="{{ auth()->user()?->name }}">
-                        <small class="field-help" data-profile-name-help>Selecciona el tipo de usuario para definir si representa a una persona o una organización.</small>
+                        <input id="business_name" name="business_name" type="text" value="{{ old('business_name', $profile->business_name) }}" placeholder="NOMBRE PERSONAL O DE LA ORGANIZACION" required data-name-mask data-profile-name-input data-registered-name="{{ auth()->user()?->name }}" @readonly($isComplete)>
+                        <small class="field-help" data-profile-name-help>{{ $isComplete ? 'Dato fijo del perfil fiscal. Para cambiarlo contacta soporte.' : 'Selecciona el tipo de usuario para definir si representa a una persona o una organizacion.' }}</small>
                     </div>
                     <div>
                         <label for="rfc">RFC</label>
-                        <input id="rfc" name="rfc" type="text" value="{{ old('rfc', $profile->rfc) }}" maxlength="13" placeholder="RFC CON HOMOCLAVE" required data-rfc-mask aria-describedby="rfcFeedback">
+                        <input id="rfc" name="rfc" type="text" value="{{ old('rfc', $profile->rfc) }}" maxlength="13" placeholder="RFC CON HOMOCLAVE" required data-rfc-mask aria-describedby="rfcFeedback" @readonly($isComplete)>
                         <small id="rfcFeedback" class="rfc-feedback" data-rfc-feedback="rfc">Formato: 12 o 13 caracteres con homoclave.</small>
                     </div>
                     <div>
                         <label for="type">Tipo de usuario</label>
-                        <select id="type" name="user_type" required>
-                            <option value="">Selecciona una opción</option>
-                            <option @selected(old('user_type', $profile->user_type) === 'Persona física')>Persona física</option>
-                            <option @selected(old('user_type', $profile->user_type) === 'Contador independiente')>Contador independiente</option>
-                            <option @selected(old('user_type', $profile->user_type) === 'Despacho contable')>Despacho contable</option>
+                        @if ($isComplete)
+                            <input type="text" value="{{ $profile->user_type }}" readonly class="readonly-field">
+                        @endif
+                        <select id="type" name="user_type" required @disabled($isComplete) @class(['visually-hidden' => $isComplete])>
+                            <option value="">Selecciona una opcion</option>
+                            <option value="Persona fisica" @selected(in_array(old('user_type', $profile->user_type), ['Persona fisica', 'Persona física', 'Persona fÃ­sica'], true))>Persona fisica</option>
+                            <option value="Contador independiente" @selected(old('user_type', $profile->user_type) === 'Contador independiente')>Contador independiente</option>
+                            <option value="Despacho contable" @selected(old('user_type', $profile->user_type) === 'Despacho contable')>Despacho contable</option>
                         </select>
+                        <small class="field-help">{{ $isComplete ? 'Dato fijo usado para permisos y suscripcion.' : 'Este dato define permisos gratuitos y premium.' }}</small>
                     </div>
                     <div>
                         <label for="primary_email">Correo principal</label>
@@ -113,31 +119,32 @@
             const nameInput = document.querySelector('[data-profile-name-input]');
             const nameLabel = document.querySelector('[data-profile-name-label]');
             const nameHelp = document.querySelector('[data-profile-name-help]');
+            const profileComplete = @json($isComplete);
 
             const syncProfileName = () => {
-                if (!type || !nameInput || !nameLabel || !nameHelp) return;
+                if (!type || !nameInput || !nameLabel || !nameHelp || profileComplete) return;
 
                 if (type.value === 'Despacho contable') {
-                    nameLabel.textContent = 'Nombre de la organización / despacho';
-                    nameInput.placeholder = 'EJ. DESPACHO HERNÁNDEZ Y ASOCIADOS';
+                    nameLabel.textContent = 'Nombre de la organizacion / despacho';
+                    nameInput.placeholder = 'EJ. DESPACHO HERNANDEZ Y ASOCIADOS';
                     nameInput.readOnly = false;
                     nameInput.classList.remove('readonly-field');
-                    nameHelp.textContent = 'Este nombre representa a la organización que administrará clientes y RFC.';
+                    nameHelp.textContent = 'Este nombre representa a la organizacion que administrara clientes y RFC.';
                     return;
                 }
 
-                if (type.value === 'Persona física' || type.value === 'Contador independiente') {
+                if (type.value === 'Persona fisica' || type.value === 'Contador independiente') {
                     nameLabel.textContent = 'Nombre personal';
                     nameInput.placeholder = 'NOMBRE DEL TITULAR';
-                    nameHelp.textContent = 'Este nombre representa a la persona titular del perfil. Después de guardar queda como referencia del entorno fiscal.';
+                    nameHelp.textContent = 'Este nombre representa a la persona titular del perfil.';
                     return;
                 }
 
                 nameLabel.textContent = 'Nombre del contador / empresa';
-                nameInput.placeholder = 'NOMBRE PERSONAL O DE LA ORGANIZACIÓN';
+                nameInput.placeholder = 'NOMBRE PERSONAL O DE LA ORGANIZACION';
                 nameInput.readOnly = false;
                 nameInput.classList.remove('readonly-field');
-                nameHelp.textContent = 'Selecciona el tipo de usuario para definir si representa a una persona o una organización.';
+                nameHelp.textContent = 'Selecciona el tipo de usuario para definir si representa a una persona o una organizacion.';
             };
 
             type?.addEventListener('change', syncProfileName);
