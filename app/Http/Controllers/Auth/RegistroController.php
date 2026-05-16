@@ -40,6 +40,11 @@ class RegistroController
             'password' => Hash::make($validated['password']),
         ]);
 
+        $user->profile()->create([
+            'primary_email' => $user->email,
+            'country' => 'México',
+        ]);
+
         if (! $this->sendConfirmationEmail($user)) {
             $user->delete();
 

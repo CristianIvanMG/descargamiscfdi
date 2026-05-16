@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Throwable;
 use Illuminate\Validation\ValidationException;
 
 class LoginController
@@ -81,7 +82,24 @@ class LoginController
             'ip' => $request->ip(),
         ]);
 
-        return redirect()->intended('/dashboard');
+        try {
+            $user->loadMissing('profile');
+
+            if (! $user->hasCompleteProfile()) {
+                return redirect('/perfil')->with('status', 'Completa tu perfil para empezar a trabajar con CFDI.');
+            }
+
+            return redirect()->intended('/dashboard');
+        } catch (Throwable $exception) {
+            Log::error('Fallo posterior al login', [
+                'user_id' => $user->getKey(),
+                'exception' => $exception,
+            ]);
+
+            return redirect('/perfil')->withErrors([
+                'profile' => 'Ocurrió un problema al cargar tu información. Intenta nuevamente.',
+            ]);
+        }
     }
 
     public function destroy(Request $request): RedirectResponse
@@ -97,7 +115,7 @@ class LoginController
     private function failLogin(): never
     {
         throw ValidationException::withMessages([
-            'email' => 'Las credenciales no son válidas o la verificación no fue correcta.',
+            'email' => 'No fue posible iniciar sesión.',
         ]);
     }
 }

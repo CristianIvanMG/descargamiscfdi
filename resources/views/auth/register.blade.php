@@ -23,7 +23,11 @@
                     <input id="name" name="name" type="text" value="{{ old('name') }}" autocomplete="name" required>
 
                     <label for="email">Correo electrónico</label>
-                    <input id="email" name="email" type="email" value="{{ old('email', request('email')) }}" autocomplete="email" required>
+                    <div class="validated-input-wrap">
+                        <input id="email" name="email" type="email" value="{{ old('email', request('email')) }}" autocomplete="email" required data-email-validation="strict" aria-describedby="emailFeedback">
+                        <span class="valid-icon" aria-hidden="true">✓</span>
+                    </div>
+                    <div id="emailFeedback" class="input-feedback" data-email-feedback="email"></div>
 
                     <label for="password">Contraseña</label>
                     <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>

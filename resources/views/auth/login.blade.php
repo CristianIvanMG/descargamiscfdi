@@ -20,7 +20,11 @@
                 <form class="auth-card" action="{{ url('/login') }}" method="post" aria-label="Iniciar sesión en ContaPro">
                     @csrf
                     <label for="email">Correo electrónico</label>
-                    <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" required>
+                    <div class="validated-input-wrap">
+                        <input id="email" name="email" type="email" value="{{ old('email') }}" autocomplete="email" required data-email-validation="preventive" aria-describedby="emailFeedback">
+                        <span class="valid-icon" aria-hidden="true">✓</span>
+                    </div>
+                    <div id="emailFeedback" class="input-feedback" data-email-feedback="email"></div>
 
                     <label for="password">Contraseña</label>
                     <input id="password" name="password" type="password" autocomplete="current-password" required>
@@ -34,7 +38,7 @@
                     <button class="btn btn-primary btn-full" type="submit">Iniciar sesión</button>
 
                     @if ($errors->any())
-                        <div class="auth-error">Las credenciales no son válidas o la verificación no fue correcta.</div>
+                        <div class="auth-error">No fue posible iniciar sesión.</div>
                     @endif
 
                     @if (session('status'))

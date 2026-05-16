@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\CfdiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DescargaController;
+use App\Http\Controllers\PerfilController;
 use App\Http\Controllers\RfcController;
 use App\Http\Controllers\SuscripcionController;
 use App\Http\Controllers\WebhookController;
@@ -24,8 +25,9 @@ Route::view('/registro/confirmado', 'auth.confirmed')->name('verification.confir
 Route::view('/recuperar', 'auth.forgot-password')->name('password.request');
 
 Route::middleware(['auth', 'verified'])->group(function (): void {
-    Route::view('/perfil', 'perfil.index')->name('profile');
-    Route::get('/dashboard', DashboardController::class)->name('dashboard');
+    Route::get('/perfil', [PerfilController::class, 'edit'])->name('profile');
+    Route::post('/perfil', [PerfilController::class, 'update'])->name('profile.update');
+    Route::get('/dashboard', DashboardController::class)->middleware(App\Http\Middleware\EnsureProfileIsComplete::class)->name('dashboard');
 
     Route::prefix('descargas')->name('descargas.')->group(function (): void {
         Route::get('/nueva', [DescargaController::class, 'create'])->name('create');

@@ -686,6 +686,49 @@ a {
     display: inline-flex;
 }
 
+.validated-input-wrap {
+    position: relative;
+}
+
+.validated-input-wrap .valid-icon {
+    align-items: center;
+    background: var(--green);
+    border-radius: 50%;
+    color: var(--white);
+    display: none;
+    font-size: 0.78rem;
+    font-weight: 900;
+    height: 22px;
+    justify-content: center;
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+}
+
+.validated-input-wrap input.is-valid {
+    border-color: var(--green);
+    box-shadow: 0 0 0 0.12rem rgba(0, 99, 65, 0.12);
+}
+
+.validated-input-wrap input.is-valid + .valid-icon {
+    display: inline-flex;
+}
+
+.validated-input-wrap input.is-invalid {
+    border-color: #b42318;
+    box-shadow: 0 0 0 0.12rem rgba(180, 35, 24, 0.12);
+}
+
+.input-feedback {
+    color: #b42318;
+    display: block;
+    font-size: 0.8rem;
+    margin-top: 0.35rem;
+    min-height: 1rem;
+}
+
 @keyframes loginShake {
     0%, 100% {
         transform: translateX(0);
