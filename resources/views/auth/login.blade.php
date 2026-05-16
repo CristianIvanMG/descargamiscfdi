@@ -5,6 +5,15 @@
 ])
 
 @section('content')
+    @php
+        if (! isset($mathQuestion)) {
+            $mathA = random_int(2, 9);
+            $mathB = random_int(2, 9);
+            session()->put('login_math_answer', $mathA + $mathB);
+            $mathQuestion = "{$mathA} + {$mathB}";
+        }
+    @endphp
+
     <section class="auth-screen">
         <div class="auth-shell">
             <a class="back-home-button" href="{{ url('/') }}" aria-label="Volver a Home">←</a>
