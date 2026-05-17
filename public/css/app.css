@@ -1476,6 +1476,22 @@ a {
     padding: 0;
 }
 
+.cfdi-guide-panel {
+    margin-bottom: 1rem;
+}
+
+.cfdi-step-grid.compact {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.cfdi-step-grid.compact .cfdi-step {
+    min-height: 120px;
+}
+
+.cfdi-process-detail {
+    margin-top: 1rem;
+}
+
 .dashboard-sat-intro,
 .efirma-panel,
 .dashboard-help-section,

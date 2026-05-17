@@ -14,4 +14,7 @@ return [
         'base_url' => env('MERCADOPAGO_BASE_URL', 'https://api.mercadopago.com'),
         'donation_amount' => env('MERCADOPAGO_DONATION_AMOUNT', 50),
     ],
+    'fiscal_api' => [
+        'key' => env('FISCAL_API_KEY'),
+    ],
 ];

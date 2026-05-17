@@ -42,6 +42,7 @@
                 <div class="workspace-actions">
                     <a class="btn btn-primary" href="{{ session('sat_authenticated') ? url('/descargas/nueva') : url('/dashboard#efirma-panel') }}">Descargar CFDI</a>
                     <a class="btn btn-outline-primary" href="{{ url('/cfdi/exportar?'.http_build_query($filters)) }}">Exportar a Excel</a>
+                    <a class="btn btn-outline-primary" href="{{ url('/suscripcion/planes') }}">Ver planes</a>
                 </div>
             </header>
 
@@ -84,6 +85,32 @@
                 </div>
             </section>
 
+            <section class="workspace-panel cfdi-guide-panel">
+                <div class="panel-header">
+                    <div>
+                        <h2>Flujo recomendado</h2>
+                        <p>Trabaja como en el SAT, pero con menos pasos y con controles fiscales desde el inicio.</p>
+                    </div>
+                </div>
+                <div class="cfdi-step-grid compact">
+                    <article class="cfdi-step active">
+                        <span>1</span>
+                        <strong>Elige tipo</strong>
+                        <p>Usa la pestaña Emitidos o Recibidos segun lo que necesitas consultar.</p>
+                    </article>
+                    <article class="cfdi-step {{ session('sat_authenticated') ? 'done' : 'error' }}">
+                        <span>2</span>
+                        <strong>Valida SAT</strong>
+                        <p>{{ session('sat_authenticated') ? 'Tu e.firma ya esta conectada.' : 'Conecta tu e.firma desde Inicio antes de solicitar.' }}</p>
+                    </article>
+                    <article class="cfdi-step pending">
+                        <span>3</span>
+                        <strong>Solicita y descarga</strong>
+                        <p>El sistema guarda la solicitud y muestra el estado cuando SAT libere paquetes.</p>
+                    </article>
+                </div>
+            </section>
+
             <section class="cfdi-flow-shell">
                 <div class="cfdi-main-tabs" role="tablist" aria-label="Tipo de CFDI">
                     <button class="active" type="button" data-cfdi-tab="emitidos">CFDI Emitidos</button>
@@ -95,7 +122,7 @@
                     'recibidos' => ['title' => 'CFDI Recibidos', 'type' => 'recibidos'],
                 ] as $tabKey => $tab)
                     <div class="cfdi-tab-panel {{ $tabKey === 'emitidos' ? 'active' : '' }}" data-cfdi-panel="{{ $tabKey }}">
-                        <div class="cfdi-step-grid">
+                        <div class="cfdi-step-grid cfdi-process-detail">
                             <article class="cfdi-step active">
                                 <span>1</span>
                                 <strong>Configura</strong>
