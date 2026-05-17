@@ -6,7 +6,8 @@
 @section('content')
     @php
         $canHistory = \App\Support\MembershipAccess::canAccessFullHistory(auth()->user());
-        $currentYear = now()->year;
+        $hasPremium = \App\Support\MembershipAccess::hasActivePaidMembership(auth()->user());
+        $premiumTooltip = 'Disponible en planes superiores';
         $yearStart = now()->startOfYear()->toDateString();
         $today = now()->toDateString();
     @endphp
@@ -20,12 +21,14 @@
             <nav>
                 <a href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
                 <a class="active" href="{{ url('/cfdi') }}"><span>▤</span>CFDI</a>
-                <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/descargas/nueva') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>⇩</span>Descarga masiva</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/cfdi') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>▧</span>Reportes</a>
                 @if ($canHistory)
                     <a href="{{ url('/historial') }}"><span>▧</span>Historial</a>
                 @endif
-                <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/dashboard') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>▣</span>Declaraciones</a>
                 <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
+                <a href="{{ url('/perfil/suscripcion') }}"><span>◩</span>Suscripcion</a>
             </nav>
             <form class="sidebar-logout" action="{{ url('/logout') }}" method="post">
                 @csrf
@@ -38,11 +41,6 @@
                 <div>
                     <h1>CFDI</h1>
                     <p>Consulta y descarga CFDI emitidos y recibidos del SAT.</p>
-                </div>
-                <div class="workspace-actions">
-                    <a class="btn btn-primary" href="{{ session('sat_authenticated') ? url('/descargas/nueva') : url('/dashboard#efirma-panel') }}">Descargar CFDI</a>
-                    <a class="btn btn-outline-primary" href="{{ url('/cfdi/exportar?'.http_build_query($filters)) }}">Exportar a Excel</a>
-                    <a class="btn btn-outline-primary" href="{{ url('/suscripcion/planes') }}">Ver planes</a>
                 </div>
             </header>
 
@@ -79,7 +77,7 @@
                         @if ($canUseMultipleRfcs)
                             Tu plan permite trabajar múltiples RFC y clientes.
                         @else
-                            Modo gratuito: RFC bloqueado a tu perfil. Solicitudes al SAT solo del año {{ $currentYear }} y por mes.
+                            Modo gratuito: RFC bloqueado a tu perfil. Solicitudes al SAT solo del año en curso y por mes.
                         @endif
                     </p>
                 </div>
@@ -216,7 +214,6 @@
                         <h2>Visualizador de CFDI</h2>
                         <p>Consulta, filtra y descarga tus comprobantes CFDI de forma sencilla. Usa los filtros para encontrar información específica y exporta los resultados en Excel cuando lo necesites.</p>
                     </div>
-                    <a class="btn btn-primary" href="{{ url('/cfdi/exportar?'.http_build_query($filters)) }}">Exportar a Excel</a>
                 </div>
 
                 <form class="cfdi-filter-panel cfdi-viewer-filters" method="get" action="{{ url('/cfdi') }}" data-free-mode="{{ $canUseMultipleRfcs ? '0' : '1' }}">
@@ -243,16 +240,16 @@
                     <div>
                         <label for="estatus">Estatus</label>
                         <select id="estatus" name="estatus">
-                            <option value="">Todos</option>
-                            <option value="vigente">Vigente</option>
-                            <option value="cancelado">Cancelado</option>
+                            <option value="todos" @selected(($filters['estatus'] ?? 'todos') === 'todos')>Todos</option>
+                            <option value="vigente" @selected(($filters['estatus'] ?? 'todos') === 'vigente')>Vigente</option>
+                            <option value="cancelado" @selected(($filters['estatus'] ?? 'todos') === 'cancelado')>Cancelado</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" type="submit">Aplicar filtros</button>
                 </form>
 
                 <div class="cfdi-viewer-actions">
-                    <a class="btn btn-outline-primary" href="{{ url('/descargas/nueva') }}">Descargar XML</a>
+                    <button class="btn btn-outline-primary" type="button" disabled>Descargar XML</button>
                     <button class="btn btn-outline-primary" type="button" disabled>Descargar PDF</button>
                     <a class="btn btn-primary" href="{{ url('/cfdi/exportar?'.http_build_query($filters)) }}">Exportar a Excel</a>
                 </div>

@@ -36,6 +36,7 @@ class CfdiController
                 'fecha_inicio' => $request->query('fecha_inicio', $periodStart->toDateString()),
                 'fecha_fin' => $request->query('fecha_fin', $periodEnd->toDateString()),
                 'rfc' => $canUseMultipleRfcs ? $request->query('rfc', '') : $profileRfc,
+                'estatus' => $request->query('estatus', 'todos'),
             ],
         ]);
     }
@@ -49,6 +50,7 @@ class CfdiController
             'fecha_inicio' => ['nullable', 'date'],
             'fecha_fin' => ['nullable', 'date', 'after_or_equal:fecha_inicio'],
             'rfc' => ['nullable', 'string', 'min:12', 'max:13', new RfcValido()],
+            'estatus' => ['nullable', 'in:todos,vigente,cancelado'],
         ]);
 
         $start = CarbonImmutable::parse($filters['fecha_inicio'] ?? now()->startOfMonth()->toDateString())->startOfDay();
@@ -57,7 +59,7 @@ class CfdiController
 
         if (! $canUseMultipleRfcs) {
             if (! MembershipAccess::isOwnProfileRfc($user, $rfc) || ! $this->isFreeMonthlyRange($start, $end)) {
-                return redirect('/suscripcion/upgrade')->with('status', 'El modo gratuito exporta solo el RFC de tu perfil y maximo 1 mes dentro del ano en curso.');
+                return redirect('/suscripcion/upgrade')->with('status', 'El modo gratuito exporta solo el RFC de tu perfil y maximo 1 mes dentro del año en curso.');
             }
         }
 
@@ -72,6 +74,10 @@ class CfdiController
 
                 if (($filters['tipo'] ?? 'todos') !== 'todos') {
                     $query->where('tipo', $filters['tipo']);
+                }
+
+                if (($filters['estatus'] ?? 'todos') !== 'todos') {
+                    $query->where('estatus', $filters['estatus']);
                 }
 
                 if ($rfc !== '') {

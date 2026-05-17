@@ -45,7 +45,7 @@ class SuscripcionController
         $current = $this->currentSubscription((int) $request->user()->id);
 
         if ($current && $current->plan === $validated['plan']) {
-            return redirect('/suscripcion/mi')->with('status', 'Ya tienes este plan activo.');
+            return redirect('/perfil/suscripcion')->with('status', 'Ya tienes este plan activo.');
         }
 
         try {

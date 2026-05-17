@@ -54,6 +54,7 @@ class PerfilController
                 'profile' => new UserProfile([
                     'primary_email' => $request->user()->email,
                 ]),
+                'profileState' => null,
                 'estados' => self::ESTADOS_MEXICO,
                 'profileStorageUnavailable' => true,
             ]);
@@ -67,6 +68,7 @@ class PerfilController
 
         return view('perfil.index', [
             'profile' => $profile,
+            'profileState' => $this->profileState($profile),
             'estados' => self::ESTADOS_MEXICO,
             'profileStorageUnavailable' => false,
         ]);
@@ -98,15 +100,26 @@ class PerfilController
             return redirect('/dashboard')->with('status', 'Perfil recibido. Falta activar almacenamiento de perfil en base de datos.');
         }
 
-        $request->user()->profile()->updateOrCreate([
-            'user_id' => $request->user()->id,
-        ], [
+        $payload = [
             ...$validated,
             'completed_at' => now(),
-        ]);
+        ];
+
+        if (Schema::hasColumn('user_profiles', 'estado')) {
+            $payload['estado'] = $validated['country'];
+        }
+
+        $request->user()->profile()->updateOrCreate([
+            'user_id' => $request->user()->id,
+        ], $payload);
 
         return $wasComplete
             ? back()->with('status', 'Perfil actualizado.')
             : redirect('/dashboard');
+    }
+
+    private function profileState(UserProfile $profile): ?string
+    {
+        return $profile->estado ?? $profile->country;
     }
 }

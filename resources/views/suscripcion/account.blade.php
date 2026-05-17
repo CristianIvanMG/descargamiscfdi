@@ -1,5 +1,5 @@
 @extends('layouts.app', [
-    'title' => 'Mi suscripcion | ContaPro',
+    'title' => 'Suscripcion | ContaPro',
     'hideNav' => true,
 ])
 
@@ -8,6 +8,9 @@
         $currentPlan = $currentSubscription?->plan;
         $status = $currentSubscription ? 'Activo' : 'En prueba';
         $renewal = $currentSubscription?->periodo_fin ? \Carbon\Carbon::parse($currentSubscription->periodo_fin)->format('d/m/Y') : 'Sin renovacion';
+        $canHistory = \App\Support\MembershipAccess::canAccessFullHistory(auth()->user());
+        $hasPremium = \App\Support\MembershipAccess::hasActivePaidMembership(auth()->user());
+        $premiumTooltip = 'Disponible en planes superiores';
     @endphp
 
     <div class="app-workspace">
@@ -18,9 +21,15 @@
             </a>
             <nav>
                 <a href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
-                <a href="{{ url('/perfil') }}"><span>◫</span>Perfil</a>
-                <a href="{{ url('/perfil') }}"><span>□</span>Configuracion</a>
-                <a class="active" href="{{ url('/suscripcion/mi') }}"><span>▧</span>Suscripcion</a>
+                <a href="{{ url('/cfdi') }}"><span>▤</span>CFDI</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/descargas/nueva') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>⇩</span>Descarga masiva</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/cfdi') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>▧</span>Reportes</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/dashboard') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>▣</span>Declaraciones</a>
+                @if ($canHistory)
+                    <a href="{{ url('/historial') }}"><span>▧</span>Historial</a>
+                @endif
+                <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuracion</a>
+                <a class="active" href="{{ url('/perfil/suscripcion') }}"><span>▧</span>Suscripcion</a>
             </nav>
             <form class="sidebar-logout" action="{{ url('/logout') }}" method="post">
                 @csrf
@@ -31,8 +40,8 @@
         <main class="workspace-main billing-main">
             <header class="workspace-topbar">
                 <div>
-                    <h1>Mi suscripcion</h1>
-                    <p>Administra tu plan, pagos y acceso premium.</p>
+                    <h1>Suscripcion</h1>
+                    <p>Administra tu plan, pagos y acceso premium desde tu perfil.</p>
                 </div>
             </header>
 
@@ -105,7 +114,6 @@
                     </div>
                 </div>
                 <div class="billing-actions">
-                    <a class="btn btn-outline-primary" href="{{ url('/suscripcion/planes') }}">Ver planes publicos</a>
                     @if ($currentSubscription)
                         <form method="post" action="{{ url('/subscriptions/cancel') }}">
                             @csrf

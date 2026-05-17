@@ -14,6 +14,7 @@ class UserProfile extends Model
         'user_type',
         'primary_email',
         'country',
+        'estado',
         'completed_at',
     ];
 
@@ -33,12 +34,14 @@ class UserProfile extends Model
     {
         $validTypes = ['Contador independiente', 'Persona fisica', 'Persona física', 'Persona fÃ­sica', 'Despacho contable'];
 
+        $state = $this->estado ?? $this->country;
+
         return $this->business_name !== null
             && in_array($this->user_type, $validTypes, true)
             && $this->primary_email !== null
             && $this->rfc !== null
-            && $this->country !== null
-            && ! in_array($this->country, ['Mexico', 'México', 'MÃ©xico'], true)
+            && $state !== null
+            && ! in_array($state, ['Mexico', 'México', 'MÃ©xico'], true)
             && $this->completed_at !== null;
     }
 }

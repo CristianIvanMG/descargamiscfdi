@@ -16,9 +16,13 @@ use Illuminate\Support\Str;
 
 class DescargaController
 {
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
         $request->user()->loadMissing('profile');
+
+        if (! MembershipAccess::hasActivePaidMembership($request->user())) {
+            return redirect('/suscripcion/upgrade')->with('status', 'Descarga masiva es una herramienta de planes superiores. Puedes seguir usando CFDI básico desde la sección CFDI.');
+        }
 
         return view('descarga.nueva', [
             'profile' => $request->user()->profile,
@@ -49,7 +53,7 @@ class DescargaController
         if (! $canUseMultipleRfcs && ! $this->isFreeRangeAllowed($validated['fecha_inicio'], $validated['fecha_fin'])) {
             return back()
                 ->withInput()
-                ->withErrors(['fecha_inicio' => 'El modo gratuito permite descargar maximo 1 mes dentro del ano en curso.']);
+                ->withErrors(['fecha_inicio' => 'El modo gratuito permite descargar maximo 1 mes dentro del año en curso.']);
         }
 
         $descarga = $this->storeDownloadRequest($user, $requestedRfc, $validated);

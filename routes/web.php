@@ -38,6 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
         ->middleware(App\Http\Middleware\RememberPrivateRoute::class)
         ->name('profile');
     Route::post('/perfil', [PerfilController::class, 'update'])->name('profile.update');
+    Route::get('/perfil/suscripcion', [SuscripcionController::class, 'account'])->name('profile.subscription');
 
     Route::middleware([
         App\Http\Middleware\EnsureProfileIsComplete::class,

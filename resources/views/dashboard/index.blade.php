@@ -6,6 +6,8 @@
 @section('content')
     @php
         $canHistory = \App\Support\MembershipAccess::canAccessFullHistory(auth()->user());
+        $hasPremium = \App\Support\MembershipAccess::hasActivePaidMembership(auth()->user());
+        $premiumTooltip = 'Disponible en planes superiores';
     @endphp
     <div class="app-workspace">
         <aside class="app-sidebar" aria-label="Menú fiscal">
@@ -16,10 +18,11 @@
             <nav>
                 <a class="active" href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
                 <a href="{{ url('/cfdi') }}"><span>▤</span>CFDI</a>
-                <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
-                <a href="{{ url('/cfdi') }}"><span>▧</span>Reportes</a>
-                <a href="{{ url('/dashboard') }}"><span>▣</span>Declaraciones</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/descargas/nueva') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>⇩</span>Descarga masiva</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/cfdi') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>▧</span>Reportes</a>
+                <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/dashboard') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>▣</span>Declaraciones</a>
                 <a href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuración</a>
+                <a href="{{ url('/perfil/suscripcion') }}"><span>◩</span>Suscripcion</a>
                 @if ($canHistory)
                     <a href="{{ url('/historial') }}"><span>▧</span>Historial</a>
                 @endif

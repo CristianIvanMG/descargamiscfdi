@@ -7,6 +7,8 @@
     @php
         $isComplete = $profile->isComplete();
         $canHistory = \App\Support\MembershipAccess::canAccessFullHistory(auth()->user());
+        $hasPremium = \App\Support\MembershipAccess::hasActivePaidMembership(auth()->user());
+        $premiumTooltip = 'Disponible en planes superiores';
     @endphp
 
     <div class="app-workspace">
@@ -20,11 +22,13 @@
                 <nav>
                     <a href="{{ url('/dashboard') }}"><span>▦</span>Inicio</a>
                     <a href="{{ url('/cfdi') }}"><span>▤</span>CFDI</a>
-                    <a href="{{ url('/descargas/nueva') }}"><span>⇩</span>Descarga masiva</a>
+                    <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/descargas/nueva') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>⇩</span>Descarga masiva</a>
+                    <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/cfdi') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>▧</span>Reportes</a>
+                    <a @class(['nav-locked' => ! $hasPremium]) href="{{ $hasPremium ? url('/dashboard') : '#' }}" title="{{ ! $hasPremium ? $premiumTooltip : '' }}" aria-disabled="{{ ! $hasPremium ? 'true' : 'false' }}" @if(! $hasPremium) onclick="return false;" @endif><span>▣</span>Declaraciones</a>
                     @if ($canHistory)
                         <a href="{{ url('/historial') }}"><span>▧</span>Historial</a>
                     @endif
-                    <a href="{{ url('/suscripcion/mi') }}"><span>◩</span>Suscripcion</a>
+                    <a href="{{ url('/perfil/suscripcion') }}"><span>◩</span>Suscripcion</a>
                     <a class="active" href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuracion</a>
                 </nav>
             @else
@@ -102,7 +106,7 @@
                         <select id="country" name="country" required data-state-combobox>
                             <option value="">Selecciona un estado</option>
                             @foreach ($estados as $estado)
-                                <option @selected(old('country', $profile->country) === $estado)>{{ $estado }}</option>
+                                <option value="{{ $estado }}" @selected(old('country', $profileState) === $estado)>{{ $estado }}</option>
                             @endforeach
                         </select>
                     </div>
