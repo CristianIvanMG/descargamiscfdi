@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'home')->middleware(App\Http\Middleware\RedirectAuthenticatedToDashboard::class)->name('home');
 Route::get('/favicon.ico', fn () => response(status: 204));
+Route::get('/suscripcion/planes', [SuscripcionController::class, 'plans'])->name('suscripcion.planes');
 Route::get('/login', [LoginController::class, 'create'])
     ->middleware(App\Http\Middleware\RedirectAuthenticatedToDashboard::class)
     ->name('login');
@@ -66,8 +67,13 @@ Route::middleware(['auth', 'verified'])->group(function (): void {
             });
         });
 
-        Route::get('/suscripcion/planes', [SuscripcionController::class, 'plans'])->name('suscripcion.planes');
         Route::post('/suscripcion/checkout', [SuscripcionController::class, 'checkout'])->name('suscripcion.checkout');
+        Route::get('/suscripcion/mi', [SuscripcionController::class, 'account'])->name('suscripcion.account');
+        Route::get('/subscriptions/current', [SuscripcionController::class, 'current'])->name('subscriptions.current');
+        Route::get('/subscriptions/plans', [SuscripcionController::class, 'plansJson'])->name('subscriptions.plans');
+        Route::post('/subscriptions/create', [SuscripcionController::class, 'create'])->name('subscriptions.create');
+        Route::post('/subscriptions/change', [SuscripcionController::class, 'change'])->name('subscriptions.change');
+        Route::post('/subscriptions/cancel', [SuscripcionController::class, 'cancel'])->name('subscriptions.cancel');
         Route::view('/suscripcion/upgrade', 'suscripcion.upgrade')->name('suscripcion.upgrade');
         Route::get('/donaciones/mercadopago', [DonationController::class, 'mercadoPago'])->name('donaciones.mercadopago');
         Route::get('/pagos/mercadopago/retorno', [PagoController::class, 'mercadoPagoReturn'])->name('pagos.mercadopago.return');

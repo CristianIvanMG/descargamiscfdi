@@ -24,6 +24,7 @@
                     @if ($canHistory)
                         <a href="{{ url('/historial') }}"><span>▧</span>Historial</a>
                     @endif
+                    <a href="{{ url('/suscripcion/mi') }}"><span>◩</span>Suscripcion</a>
                     <a class="active" href="{{ url('/perfil') }}"><span>◫</span>Perfil / Configuracion</a>
                 </nav>
             @else

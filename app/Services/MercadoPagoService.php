@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use RuntimeException;
 
@@ -15,6 +16,72 @@ class MercadoPagoService
         'anual_basico' => ['name' => 'Anual basico', 'price' => 199.0, 'months' => 12],
         'anual_completo' => ['name' => 'Anual completo', 'price' => 399.0, 'months' => 12],
     ];
+
+    public static function publicPlans(): array
+    {
+        return [
+            [
+                'clave' => 'gratis',
+                'nombre' => 'Gratis',
+                'precio' => 0,
+                'periodo' => 'sin pago',
+                'descripcion' => 'Para probar CFDI con tu propio RFC.',
+                'beneficios' => [
+                    'RFC del perfil bloqueado',
+                    'Solicitudes por mes del año en curso',
+                    'Exportacion a Excel del RFC propio',
+                    'Validacion SAT con e.firma',
+                ],
+                'cta' => 'Empezar ahora',
+                'popular' => false,
+            ],
+            [
+                'clave' => 'mensual',
+                'nombre' => 'Mensual',
+                'precio' => 99,
+                'periodo' => 'MXN / mes',
+                'descripcion' => 'Para contadores que necesitan operar mas rapido.',
+                'beneficios' => [
+                    'Clientes y multiples RFC',
+                    'Mayor volumen operativo',
+                    'Exportacion avanzada',
+                    'Soporte para flujo contable mensual',
+                ],
+                'cta' => 'Suscribirme',
+                'popular' => false,
+            ],
+            [
+                'clave' => 'anual_basico',
+                'nombre' => 'Anual basico',
+                'precio' => 199,
+                'periodo' => 'MXN / año',
+                'descripcion' => 'Ideal para uso constante con ahorro anual.',
+                'beneficios' => [
+                    'Todo lo del plan mensual',
+                    'Mejor costo anual',
+                    'Gestion de clientes',
+                    'Descargas avanzadas',
+                ],
+                'cta' => 'Suscribirme',
+                'popular' => true,
+            ],
+            [
+                'clave' => 'anual_completo',
+                'nombre' => 'Anual completo',
+                'precio' => 399,
+                'periodo' => 'MXN / año',
+                'descripcion' => 'Para despachos que requieren control e historial.',
+                'beneficios' => [
+                    'Historial SAT completo',
+                    'Multiples RFC y clientes',
+                    'Exportacion y auditoria operativa',
+                    'Preparado para reportes avanzados',
+                ],
+                'cta' => 'Actualizar',
+                'popular' => false,
+            ],
+        ];
+    }
 
     public function createDonationPreference(User $user): string
     {
@@ -28,6 +95,12 @@ class MercadoPagoService
     {
         if (! array_key_exists($plan, self::PLANS)) {
             throw new RuntimeException('Plan no valido.');
+        }
+
+        $active = $this->activeSubscription((int) $user->id);
+
+        if ($active && $active->plan === $plan) {
+            throw new RuntimeException('Ya tienes este plan activo.');
         }
 
         $definition = self::PLANS[$plan];
@@ -150,6 +223,10 @@ class MercadoPagoService
             throw new RuntimeException('Pago local no encontrado.');
         }
 
+        if ($payment->estado === 'aprobado') {
+            return;
+        }
+
         $normalized = match ($status) {
             'approved' => 'aprobado',
             'rejected' => 'rechazado',
@@ -215,6 +292,21 @@ class MercadoPagoService
         $definition = self::PLANS[$plan];
 
         $expiresAt = now()->addMonths((int) $definition['months']);
+
+        $replacement = [
+            'estatus' => 'reemplazada',
+            'updated_at' => now(),
+        ];
+
+        if (Schema::hasColumn('suscripciones', 'activo')) {
+            $replacement['activo'] = false;
+        }
+
+        DB::table('suscripciones')
+            ->where('user_id', $userId)
+            ->whereIn('estatus', ['activa', 'activo', 'active', 'paid'])
+            ->update($replacement);
+
         $payload = [
             'user_id' => $userId,
             'plan' => $plan,
@@ -241,6 +333,43 @@ class MercadoPagoService
         }
 
         DB::table('suscripciones')->insert($payload);
+
+        $this->sendSubscriptionEmail($userId, $plan, $expiresAt);
+    }
+
+    private function activeSubscription(int $userId): ?object
+    {
+        if (! Schema::hasTable('suscripciones')) {
+            return null;
+        }
+
+        return DB::table('suscripciones')
+            ->where('user_id', $userId)
+            ->whereIn('estatus', ['activa', 'activo', 'active', 'paid'])
+            ->where(function ($query): void {
+                $query->whereNull('periodo_fin')
+                    ->orWhere('periodo_fin', '>', now());
+            })
+            ->orderByDesc('created_at')
+            ->first();
+    }
+
+    private function sendSubscriptionEmail(int $userId, string $plan, mixed $expiresAt): void
+    {
+        $user = User::query()->find($userId);
+
+        if (! $user) {
+            return;
+        }
+
+        try {
+            Mail::raw(
+                "Pago confirmado. Tu suscripcion ContaPro ({$plan}) esta activa hasta ".$expiresAt->format('d/m/Y').'.',
+                fn ($message) => $message->to($user->email)->subject('Suscripcion ContaPro activa')
+            );
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 
     private function request(string $method, string $path, ?array $payload = null): array
